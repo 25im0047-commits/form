@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../testフォルダ"
+		}
+	],
+	"settings": {
+		"prisma.pinToPrisma6": true
+	}
+}

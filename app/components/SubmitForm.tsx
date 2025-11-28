@@ -1,7 +1,6 @@
 "use client";
 import React from "react"
-import { useForm, SubmitHandler } from "react-hook-form"
-
+import { useForm } from "react-hook-form"
 import {
   Card,
   CardAction,
@@ -11,14 +10,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { isReactCompilerRequired } from "next/dist/build/swc/generated-native";
+import POST from "../api/send-email/route";
 
 
 const SubmitForm = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
-
-  const onSubmit = (data : any) => {
+  // asyncの呼び方あってる？
+  const onSubmit = async(data : any) => {
     console.log(data);
+
+    const formData = new FormData();
+    formData.append("name", data.name);
+    formData.append("email", data.email);
+    formData.append("password", data.password);
+
+    await POST(formData) 
   }
 
   return (

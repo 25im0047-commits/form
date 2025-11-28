@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack -p 3000",
-    "email:dev": "email dev -d ./src/emails -p 3001",
+    "email:dev": "email dev -d ./react-email-starter/emails -p 3001",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"

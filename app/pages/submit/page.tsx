@@ -1,5 +1,5 @@
 import React from 'react'
-import SubmitForm from '../../components/SubmitForm'
+import SubmitForm from '@/app/components/SubmitForm'
 
 const Submitpage = () => {
   return (
