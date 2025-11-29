@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import POST from "@/app/sendEmail/mail";
 
 export default function SendForm() {
     const router = useRouter();
@@ -95,12 +96,27 @@ export default function SendForm() {
     return Object.keys(newErrors).length === 0;
   }
 
-  function handleSubmit(e: any) {
+  async function handleSubmit(e: any) {
     e.preventDefault();
 
     if (!validate()) return;
 
     console.log("送信データ:", form);
+
+    const formData = new FormData();
+
+    formData.append("name", form.name);
+    formData.append("email", form.email);
+    formData.append("grade", form.grade);
+    formData.append("school", form.school);
+    formData.append("kinds", form.kinds.join(", "));
+    formData.append("date", `${form.date.year}年${form.date.month}月${form.date.day}日${form.date.time}`);
+
+    try{
+      await POST(formData);
+    } catch (error) {
+      console.log('Error sending email:', error);
+    }
 
     // fetch などで送信…
     //router.push("sendform/completion");
