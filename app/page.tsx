@@ -10,7 +10,7 @@ export default function HomePage() {
   const [baseDate, setBaseDate] = useState<Date>(() => {
     const d = new Date();
     d.setHours(0, 0, 0, 0);
-    return d;//a
+    return d;
   });
 
   const today = new Date();
