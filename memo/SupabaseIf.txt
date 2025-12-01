@@ -1,0 +1,39 @@
+・supabaseからデータを取得することができていない
+⇨RLSポリシーの設定ができていないから。Supabaseでは、RLSポリシーが有効になっている場合、設定されていないとセキュリティ上データを取得で内容になっている。
+特に、今回は読み込みと書き込みをすることが目的で、のうち読み込みができていないから、それらの権限をオンにすると解決すると考えられる。
+
+⇨解決策
+1.RLSポリシーの設定ページを開く
+2.RLSポリシーに以下の内容を書き込む
+今回の要件
+・ユーザー(未認証)/書き込み(INSERT)/フォーム送信時
+・開発者(認証)/読み取り(SELECT)・編集(UPDATE)・削除(DELETE)/管理画面からアクセス
+
+-- 1. 誰でも書き込み可能（INSERT のみ）
+CREATE POLICY "Enable insert for anonymous users"
+ON rserve_form
+FOR INSERT
+TO anon
+WITH CHECK (true);
+
+-- 2. 誰でも予約日を読み取り可能（SELECT）
+-- ※ フォームで予約済みの日付をチェックするため
+CREATE POLICY "Enable read reservation_date for all users"
+ON rserve_form
+FOR SELECT
+TO anon, authenticated  -- 未認証・認証済みの両方
+USING (true);
+
+-- 3. 認証済みユーザー（開発者）は更新・削除可能
+CREATE POLICY "Enable update for authenticated users"
+ON rserve_form
+FOR UPDATE
+TO authenticated
+USING (true)
+WITH CHECK (true);
+
+CREATE POLICY "Enable delete for authenticated users"
+ON rserve_form
+FOR DELETE
+TO authenticated
+USING (true);
