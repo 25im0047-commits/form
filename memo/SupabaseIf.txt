@@ -37,3 +37,12 @@ ON rserve_form
 FOR DELETE
 TO authenticated
 USING (true);
+
+・ファイルパスの読み込みができない
+⇨ファイルパスが間違っている
+⇨export defaultができていない
+
+・serverActionの呼び出し方が間違っている。
+⇨serveractionは非同期関数のなかでawaitを使ってよび出さないといけないのではないか？
+これはもっとえいば、非同期関数を呼び出すには非同期関数内でなくてはならないというルールがある
+⇨この仮説は正しい

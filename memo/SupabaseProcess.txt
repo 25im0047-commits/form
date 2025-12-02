@@ -96,3 +96,11 @@ cookiesToSet = [
 
 ◉タスク
 ・持ってきたデータをどのように活用してフロントエンドで予約の制御をするのか？
+
+
+◉insertプロセス
+・sendform/page.tsxでPOST関数の後にawait InsertReservationData を実行状態を確立
+・reservatuion_date/page.tsxをreservation_data/sql.tsxとして、sql操作を書いて置く。insert文も追加する
+
+・POST関数は、一旦コメントアウトしておいた方がいいかもしれない
+

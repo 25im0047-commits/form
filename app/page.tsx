@@ -2,8 +2,21 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import select_reservation_date from "@/app/reservation_date/reservation_date";
+
 
 export default function HomePage() {
+
+  useEffect(() => {
+    async function fetchData() {
+      const fetch_result = await select_reservation_date();
+      await console.log("Fetched reservation dates:", fetch_result);
+    }
+
+    fetchData();
+    console.log('コンポーネントがロードされました');
+  }, []); // 空の依存配列を指定することで、マウント時に一度だけ実行される
+
   const router = useRouter();
 
   // baseDate is the first day shown in the week view
