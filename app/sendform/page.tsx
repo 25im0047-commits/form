@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import POST from "@/app/sendEmail/mail";
+import { insert_reservation_data } from "@/app/reservation_data/reservation_data";
 
 export default function SendForm() {
     const router = useRouter();
@@ -114,6 +115,7 @@ export default function SendForm() {
 
     try{
       await POST(formData);
+      await insert_reservation_data(formData);
     } catch (error) {
       console.log('Error sending email:', error);
     }

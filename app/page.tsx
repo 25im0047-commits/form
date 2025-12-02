@@ -2,14 +2,14 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import select_reservation_date from "@/app/reservation_date/reservation_date";
+import {select_reservation_data} from "@/app/reservation_data/reservation_data";
 
 
 export default function HomePage() {
 
   useEffect(() => {
     async function fetchData() {
-      const fetch_result = await select_reservation_date();
+      const fetch_result = await select_reservation_data();
       await console.log("Fetched reservation dates:", fetch_result);
     }
 
