@@ -5,4 +5,5 @@ html,body {
   overscroll-behavior: none;
   overflow-x: hidden;
   height: 100%;
+  letter-spacing: 0.5px;
 }
