@@ -13,7 +13,7 @@ export default async function POST(formData: FormData) {
   try {
     const { data, error } = await resend.emails.send({
       from: 'K-PASS無料受験相談予約通知 <onboarding@resend.dev>',
-      to: ['matuott1230@gmail.com'],
+      to: [/*'matuott1230@gmail.com'*/'shotakobayashi7@gmail.com'],
       subject: 'K-PASS 無料受験相談予約通知',
       react: EmailTemplate(formData),
     });

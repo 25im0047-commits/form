@@ -22,6 +22,7 @@ export default function SendForm() {
         },
         name: "",
         email: "",
+        phone: "",
         grade: "",
         school: "",
         kinds: [] as string[],
@@ -89,6 +90,7 @@ export default function SendForm() {
 
     if (!form.name) newErrors.name = true;
     if (!form.email) newErrors.email = true;
+    if (!form.phone) newErrors.phone = true;
     if (!form.grade) newErrors.grade = true;
     if (!form.school) newErrors.school = true;
     if (form.kinds.length === 0) newErrors.kinds = true;
@@ -108,6 +110,7 @@ export default function SendForm() {
 
     formData.append("name", form.name);
     formData.append("email", form.email);
+    formData.append("phone", form.phone);
     formData.append("grade", form.grade);
     formData.append("school", form.school);
     formData.append("kinds", form.kinds.join(", "));
@@ -173,6 +176,24 @@ export default function SendForm() {
             />
           </div>
 
+          {/* 電話番号 */}
+          <div className="mt-7">
+            <p className="text-sm text-[#789b8b]">
+              電話番号（ハイフンなし）{" "}<span className="text-red-500"> *</span>
+              {errors.phone && <span className="text-red-500">入力必須項目です。</span>}
+            </p>
+            <input
+              name="phone"
+              value={form.phone}
+              onChange={handleChange}
+              type="tel"
+              pattern="[0-9]{9,14}"
+              required
+              className="w-full bg-white rounded-md shadow-md p-3 mt-2"
+              placeholder="例）08012345678"
+            />
+          </div>
+
           {/* 学年 */}
           <div className="mt-7 relative">
             <p className="text-sm text-[#789b8b]">
@@ -224,7 +245,7 @@ export default function SendForm() {
               お問い合わせサービス<span className="text-red-500"> *</span> {errors.kinds && <span className="text-red-500">選択必須項目です。</span>}
             </p>
 
-            {["大学受験対策", "高校受験対策", "英検対策", "TOEFL対策", "IELTS対策", "TOEIC対策"].map((k) => (
+            {["無料受験相談（生徒＋保護者）", "無料受験相談（生徒のみ）", "入塾説明会（生徒＋保護者）", "入塾説明会（保護者のみ）"].map((k) => (
               <label key={k} className="hover:cursor-pointer">
                 <input
                   type="checkbox"
