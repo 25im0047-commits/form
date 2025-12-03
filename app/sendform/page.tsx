@@ -116,11 +116,13 @@ export default function SendForm() {
     formData.append("kinds", form.kinds.join(", "));
     formData.append("date", `${form.date.year}年${form.date.month}月${form.date.day}日${form.date.time}`);
 
+    console.log('FormData to be sent:', Array.from(formData.entries()));
+
     try{
       await POST(formData);
       await insert_reservation_data(formData);
     } catch (error) {
-      console.log('Error sending email:', error);
+      console.error('エラーが起きてるよ！！！！！:', error);
     }
 
     // fetch などで送信…
