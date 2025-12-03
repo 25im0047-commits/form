@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import POST from "@/app/sendEmail/mail";
+import {SEND_TO_OWNER, SEND_TO_CUSTEMER} from "@/app/sendEmail/mail";
 import { insert_reservation_data } from "@/app/reservation_data/reservation_data";
 
 export default function SendForm() {
@@ -114,7 +114,8 @@ export default function SendForm() {
     formData.append("date", `${form.date.year}年${form.date.month}月${form.date.day}日${form.date.time}`);
 
     try{
-      await POST(formData);
+      await SEND_TO_OWNER(formData);
+      await SEND_TO_CUSTEMER(formData);
       await insert_reservation_data(formData);
     } catch (error) {
       console.log('Error sending email:', error);

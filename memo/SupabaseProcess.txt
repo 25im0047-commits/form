@@ -104,3 +104,40 @@ cookiesToSet = [
 
 ・POST関数は、一旦コメントアウトしておいた方がいいかもしれない
 
+
+・元POST関数の呼び出しをSEND_TO_OWNERに変更(sendformのpage.tsx)
+・元POST関数のimportを{}バージョンに変更(sendformのpage.tsx)
+・mail.tsxのtemplateの呼び出しとimportをEmailTemplateOwnerに変更
+・EmailTemplate_Custemer(formData)関数をEmailTemplate.tsxに設定する
+・定数だとdefaultが必須なのに二つは書けないから、関数に置き換えていく
+
+・matuott1230@gmail.comにメールが送信完了
+・25im0103@i-u.ac.jpにメールが送信完了
+⇨resendで送れる形式が・・・.com
+　⇨ドメイン認証に使ったアドレスにしてみる。何にも送れなくなった。
+・supabaseにメール配信完了
+・supabaseに配信した情報を取得できている
+
+・任意の名前@認証済みにのドメインという形式をfrom偽邸することで、toは誰でも送れる。
+逆にonboarding@resend.devはテスト用のアドレスなので、resendで登録されているアドレスにしか送れないようになってしまっている。
+なので、@マークの後をcramreserveform.comに変更してみる。期待する結果は、無事に自分と学校用のアドレスにメールが送信される.
+結果としては、所有者であるアドレスには無事に送信ができた。なので、この書き方自体は問題ない。さらに言えば、独自ドメインからの送信は無事に成功している。
+エラーは以下のようになっている。
+CustomerData: null error {
+  statusCode: 422,
+  name: 'validation_error',
+  message: 'Invalid `to` field. The email address needs to follow the `email@example.com` or `Name <email@example.com>` format.'
+}
+おそらくこれは、mailの形式が@~~~~.com形式じゃないとダメで、学校のアドレスのような0-u.ac.jp系はそのルールに反するのでうまく送ることができない。
+上記のように言える理由としては、所有者に対しては問題なく遅れていて、形式も.com形式であるため。
+
+・試すこと
+  ・.comなら本当に送れるのか？
+  ・.com以外には送れないのか、それとも、送るための設定があるのか？を明確にする(理想)
+  　⇨そんなことない。多分入力形式が間違っている。
+    ・入力データの送信じゃなくて、こちらから別アドレスを指定する
+    ⇨うまくいった
+
+・定数を渡せない理由としては、tsのルールに反する
+　・toは文字列を期待しているのに、nullになる可能性が存在しているため、安全のためにエラーを出す。
+      しかし、stringであることが確定しているので、as string という型アサーションを追加することで、ここはstringで確定しているからエラー出さないでとtsに言える
