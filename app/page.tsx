@@ -155,7 +155,13 @@ export default function HomePage() {
                   >
                     {nextday(index)}
                   </span>{" "}
-                  <span className={`text-[0.75rem] ${index === 0 ? "text-[#00c7ce]" : ""}`}>
+                  <span className={`text-[0.75rem] ${
+                    Number(nextday(index)) === new Date().getDate() &&
+                      addDays(baseDate, index).getMonth() === new Date().getMonth() &&
+                      addDays(baseDate, index).getFullYear() === new Date().getFullYear()
+                        ? "text-[#00c7ce]"
+                        : ""
+                    }`}>
                     {["日", "月", "火", "水", "木", "金", "土"][(baseDate.getDay() + index) % 7]}
                   </span>
                 </h3>
