@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import POST from "@/app/sendEmail/mail";
+import {SEND_TO_OWNER, SEND_TO_CUSTEMER} from "@/app/sendEmail/mail";
 import { insert_reservation_data } from "@/app/reservation_data/reservation_data";
 
 export default function SendForm() {
@@ -119,7 +119,8 @@ export default function SendForm() {
     console.log('FormData to be sent:', Array.from(formData.entries()));
 
     try{
-      await POST(formData);
+      await SEND_TO_OWNER(formData);
+      await SEND_TO_CUSTEMER(formData);
       await insert_reservation_data(formData);
     } catch (error) {
       console.error('エラーが起きてるよ！！！！！:', error);
