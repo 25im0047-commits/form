@@ -126,14 +126,9 @@ export default function SendForm() {
       return true;
     }
 
-    async function Checkdata() {
-      const fetch_result = await CheckData(checktime);
-      console.log("要素取り出し:", fetch_result);
-      return fetch_result;
-    }
-
     //時間を改竄されても、予約時間が被らないようにする処理
-    if (await Checkdata().then((res) => res.data && res.data.length > 0)) {
+    const fetch_result = await CheckData(checktime);
+    if (fetch_result.data && fetch_result.data.length > 0) {
       alert("エラーが発生しました。");
       return true;
     }

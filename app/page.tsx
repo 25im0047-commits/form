@@ -95,9 +95,7 @@ export default function HomePage() {
     }
 
     if (await Checkdata().then((res) => res.data && res.data.length > 0)) {
-      alert(
-        "申し訳ございません。その日時は既に予約が埋まっております。別の日時をお選びください。"
-      );
+      alert("エラーが発生しました。");
       return;
     }
 
