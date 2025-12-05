@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { SEND_TO_OWNER, SEND_TO_CUSTEMER } from "@/app/sendEmail/mail";
 import { insert_reservation_data } from "@/app/reservation_data/reservation_data";
+import { CheckData } from "@/app/reservation_data/reservation_data";
 
 export default function SendForm() {
   const router = useRouter();
@@ -104,6 +105,21 @@ export default function SendForm() {
     if (!validate()) return;
 
     setDisabled(true);
+
+    //チェック処理
+    const checktime = `${year}年${month}月${day}日${time}`;
+    console.log("チェック日時:", checktime);
+    async function Checkdata() {
+      const fetch_result = await CheckData(checktime);
+      await console.log("要素取り出し:", fetch_result);
+      return fetch_result;
+    }
+
+    if (await Checkdata().then((res) => res.data && res.data.length > 0)) {
+      alert("エラーが発生しました。");
+      router.push("/");
+      return;
+    }
 
     console.log("送信データ:", form);
 
