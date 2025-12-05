@@ -12,7 +12,7 @@ export async function SEND_TO_OWNER(formData: FormData) {
   console.log('Form Data received:', formData);
   try {
     const { data, error } = await resend.emails.send({
-      from: 'K-PASS無料受験相談予約通知 <onboarding@cramreserveform.com>',
+      from: 'K-PASS <reservation@cramreserveform.com>',
       to: ['matuott1230@gmail.com'],
       subject: 'K-PASS 無料受験相談予約通知',
       react: EmailTemplateOwner(formData),
@@ -29,7 +29,7 @@ export async function SEND_TO_CUSTEMER(formData: FormData) {
   console.log('Custemer Email:', email_customer);
   try {
     const { data, error } = await resend.emails.send({
-      from: 'K-PASS無料受験相談予約通知 <onboarding@cramreserveform.com>',
+      from: 'K-PASS <reservation@cramreserveform.com>',
       to: [email_customer],
       subject: 'K-PASS 無料受験相談予約完了通知',
       react: EmailTemplateCustemer(formData),
