@@ -20,6 +20,7 @@ export async function insert_reservation_data(formData:FormData) {
   const school = formData.get('school');
   const kinds = formData.get('kinds');
   const date = formData.get('date');
+  const phone = formData.get('phone');
 
   console.log(name, email, grade, school, kinds, date);
   try {
@@ -32,7 +33,8 @@ export async function insert_reservation_data(formData:FormData) {
       grade: grade,
       type: kinds,
       school: school,
-      reservation_date: date
+      reservation_date: date,
+      phone_number: phone,
     });
     console.log("送信成功");
     console.log(error);
