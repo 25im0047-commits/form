@@ -99,29 +99,63 @@ export default function SendForm() {
     return Object.keys(newErrors).length === 0;
   }
 
+  async function DateCheck() {
+    //チェック処理
+    const checktime = `${year}年${month}月${day}日${time}`;
+    console.log("チェック日時:", checktime);
+
+    // 選択された日時が明日以降であるかチェック
+    const selectedDate = new Date(
+      `${year}-${month?.padStart(2, "0")}-${day?.padStart(2, "0")}T${time}:00`
+    );
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(0, 0, 0, 0);
+
+    if (selectedDate < tomorrow) {
+      alert("エラーが発生しました。");
+      return true;
+    }
+
+    // 日付の妥当性をチェック
+    const dateStr = `${year}-${month?.padStart(2, "0")}-${day?.padStart(2, "0")}`;
+    const timeStr = time;
+    const dateObj = new Date(`${dateStr}T${timeStr}:00`);
+    if (isNaN(dateObj.getTime())) {
+      alert("エラーが発生しました。");
+      return true;
+    }
+
+    async function Checkdata() {
+      const fetch_result = await CheckData(checktime);
+      console.log("要素取り出し:", fetch_result);
+      return fetch_result;
+    }
+
+    //時間を改竄されても、予約時間が被らないようにする処理
+    if (await Checkdata().then((res) => res.data && res.data.length > 0)) {
+      alert("エラーが発生しました。");
+      return true;
+    }
+
+    return false;
+  }
+
   async function handleSubmit(e: any) {
     e.preventDefault();
 
+    //要素があるかチェック
     if (!validate()) return;
 
     setDisabled(true);
 
-    //チェック処理
-    const checktime = `${year}年${month}月${day}日${time}`;
-    console.log("チェック日時:", checktime);
-    async function Checkdata() {
-      const fetch_result = await CheckData(checktime);
-      await console.log("要素取り出し:", fetch_result);
-      return fetch_result;
-    }
+    console.log("送信データ:", form);
 
-    if (await Checkdata().then((res) => res.data && res.data.length > 0)) {
-      alert("エラーが発生しました。");
-      router.push("/");
+    //日時チェック処理
+    if (await DateCheck()) {
+      router.replace("/");
       return;
     }
-
-    console.log("送信データ:", form);
 
     const formData = new FormData();
 
