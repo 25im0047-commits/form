@@ -8,6 +8,8 @@ import { insert_reservation_data } from "@/app/reservation_data/reservation_data
 export default function SendForm() {
   const router = useRouter();
 
+  const [disabled, setDisabled] = useState(false);
+
   const [year, setYear] = useState<string | null>(null);
   const [month, setMonth] = useState<string | null>(null);
   const [day, setDay] = useState<string | null>(null);
@@ -100,6 +102,8 @@ export default function SendForm() {
     e.preventDefault();
 
     if (!validate()) return;
+
+    setDisabled(true);
 
     console.log("送信データ:", form);
 
@@ -301,15 +305,20 @@ export default function SendForm() {
             ))}
           </div>
           <div className="mt-7">
-            <Link href="/">
-              {/*日程選択のルートを置く*/}
-              <p className="bg-white border border-[#00c7ce] text-[#00c7ce] font-bold text-sm rounded-sm py-2.5 text-center hover:bg-gray-200">
-                日時を選び直す
-              </p>
-            </Link>
+            <button className="w-full" disabled={disabled}>
+              <Link href="/">
+                {/*日程選択のルートを置く*/}
+                <p className="bg-white border border-[#00c7ce] text-[#00c7ce] font-bold text-sm rounded-sm py-2.5 text-center hover:bg-gray-200">
+                  日時を選び直す
+                </p>
+              </Link>
+            </button>
+
             <button
-              type="submit"
-              className="mt-5 bg-[#00c7ce] text-white p-3 w-full rounded-sm hover:cursor-pointer hover:bg-[#00b0b8]"
+              //type="submit"
+              className={`mt-5 bg-[#00c7ce] text-white p-3 w-full rounded-sm hover:cursor-pointer hover:bg-[#00b0b8]
+                ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
+              disabled={disabled}
             >
               予約を確定
             </button>
