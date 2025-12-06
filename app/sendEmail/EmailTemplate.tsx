@@ -7,6 +7,7 @@ export function EmailTemplateOwner (formData:FormData) {
     const school = formData.get('school') as string;
     const kinds = formData.get('kinds') as string;
     const date = formData.get('date') as string;
+    const phone = formData.get('phone') as string;
 
   return (
     <>
@@ -24,6 +25,11 @@ export function EmailTemplateOwner (formData:FormData) {
                     <td className="py-1 pr-2">メールアドレス</td>
                     <td className="py-1 px-2">:</td>
                     <td className="py-1 pl-2">{email}</td>
+                </tr>
+                <tr>
+                    <td className="py-1 pr-2">電話番号（ハイフンなし）</td>
+                    <td className="py-1 px-2">:</td>
+                    <td className="py-1 pl-2">{phone}</td>
                 </tr>
                 <tr>
                     <td className="py-1 pr-2">学年</td>
@@ -60,6 +66,8 @@ export function EmailTemplateCustemer (formData:FormData) {
     const school = formData.get('school') as string;
     const kinds = formData.get('kinds') as string;
     const date = formData.get('date') as string;
+    const phone = formData.get('phone') as string;
+
 
   return (
     <>
@@ -77,6 +85,11 @@ export function EmailTemplateCustemer (formData:FormData) {
                     <td className="py-1 pr-2">メールアドレス</td>
                     <td className="py-1 px-2">:</td>
                     <td className="py-1 pl-2">{email}</td>
+                </tr>
+                <tr>
+                    <td className="py-1 pr-2">電話番号（ハイフンなし）</td>
+                    <td className="py-1 px-2">:</td>
+                    <td className="py-1 pl-2">{phone}</td>
                 </tr>
                 <tr>
                     <td className="py-1 pr-2">学年</td>
