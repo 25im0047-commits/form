@@ -8,6 +8,7 @@ import {
 } from "@/app/reservation_data/reservation_data";
 
 export default function HomePage() {
+  const router = useRouter();
   const [reservedSlots, setReservedSlots] = useState<string[]>([]);
   useEffect(() => {
     async function fetchData() {
@@ -23,9 +24,7 @@ export default function HomePage() {
 
     fetchData();
     console.log("コンポーネントがロードされました");
-  }, []);
-
-  const router = useRouter();
+  }, [router]);
 
   // baseDate is the first day shown in the week view
   const [baseDate, setBaseDate] = useState<Date>(() => {
@@ -96,6 +95,7 @@ export default function HomePage() {
 
     if (await Checkdata().then((res) => res.data && res.data.length > 0)) {
       alert("エラーが発生しました。");
+      location.reload();
       return;
     }
 
@@ -161,7 +161,7 @@ export default function HomePage() {
             className="bg-white rounded-md font-bold m-2 my-1 px-4 py-2 hover:bg-gray-200 text-[#00c7ce] shadow-md"
             onClick={() => setBaseDate(addDays(today, 1))}
           >
-            本日に移動
+            最短日時
           </button>
         </div>
 
