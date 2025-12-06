@@ -55,14 +55,7 @@ export default function SendForm() {
 
   const [open, setOpen] = useState(false);
 
-  const options = [
-    "高校1年生",
-    "高校2年生",
-    "高校3年生",
-    "浪人生",
-    "大学生",
-    "社会人",
-  ];
+  const options = ["高校1年生", "高校2年生", "高校3年生", "既卒生"];
 
   const [errors, setErrors] = useState<Record<string, boolean>>({});
 
@@ -166,6 +159,13 @@ export default function SendForm() {
     );
 
     console.log("FormData to be sent:", Array.from(formData.entries()));
+    console.log("FormDataの中身確認:", formData.get("name"));
+    console.log("FormDataの中身確認:", formData.get("email"));
+    console.log("FormDataの中身確認:", formData.get("phone_number"));
+    console.log("FormDataの中身確認:", formData.get("grade"));
+    console.log("FormDataの中身確認:", formData.get("school"));
+    console.log("FormDataの中身確認:", formData.get("kinds"));
+    console.log("FormDataの中身確認:", formData.get("date"));
 
     try {
       await SEND_TO_OWNER(formData);
