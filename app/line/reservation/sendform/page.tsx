@@ -38,7 +38,7 @@ export default function SendForm() {
     const t = sessionStorage.getItem("time");
 
     if (!y || !m || !d || !t) {
-      router.replace("/");
+      router.replace("/line/reservation");
       return;
     }
 
@@ -94,12 +94,18 @@ export default function SendForm() {
 
   async function DateCheck() {
     //チェック処理
+    if (!year || !month || !day || !time) {
+      alert("エラーが発生しました。");
+      console.log("日時情報が不足しています。");
+      return true;
+    }
+
     const checktime = `${year}年${month}月${day}日${time}`;
     console.log("チェック日時:", checktime);
 
     // 選択された日時が明日以降であるかチェック
     const selectedDate = new Date(
-      `${year}-${month?.padStart(2, "0")}-${day?.padStart(2, "0")}T${time}:00`
+      `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}T${time}:00`
     );
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
@@ -107,15 +113,19 @@ export default function SendForm() {
 
     if (selectedDate < tomorrow) {
       alert("エラーが発生しました。");
+      console.log("過去の日付が選択されました。");
       return true;
     }
 
     // 日付の妥当性をチェック
-    const dateStr = `${year}-${month?.padStart(2, "0")}-${day?.padStart(2, "0")}`;
-    const timeStr = time;
+    const dateStr = `${year}-${month.padStart(2, "0")}-${day.padStart(2, "0")}`;
+    const [h, m] = time.split(":");
+    const timeStr = `${h.padStart(2, "0")}:${m}`;
     const dateObj = new Date(`${dateStr}T${timeStr}:00`);
+
     if (isNaN(dateObj.getTime())) {
       alert("エラーが発生しました。");
+      console.log("無効な日付が選択されました。");
       return true;
     }
 
@@ -123,6 +133,7 @@ export default function SendForm() {
     const fetch_result = await CheckData(checktime);
     if (fetch_result.data && fetch_result.data.length > 0) {
       alert("エラーが発生しました。");
+      console.log("予約済みの日時が選択されました。");
       return true;
     }
 
@@ -141,7 +152,7 @@ export default function SendForm() {
 
     //日時チェック処理
     if (await DateCheck()) {
-      router.replace("/");
+      router.replace("/line/reservation");
       return;
     }
 
@@ -174,7 +185,7 @@ export default function SendForm() {
       alert(
         "予約が完了しました。\nご登録いただいたメールアドレスに確認メールを送信しました。"
       );
-      router.push("/");
+      router.push("/line/reservation");
     } catch (error) {
       console.error("エラーが起きてるよ！！！！！:", error);
     }
@@ -351,7 +362,7 @@ export default function SendForm() {
           </div>
           <div className="mt-7">
             <button className="w-full" disabled={disabled}>
-              <Link href="/">
+              <Link href="/line/reservation">
                 {/*日程選択のルートを置く*/}
                 <p className="bg-white border border-[#00c7ce] text-[#00c7ce] font-bold text-sm rounded-sm py-2.5 text-center hover:bg-gray-200">
                   日時を選び直す
