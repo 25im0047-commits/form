@@ -11,7 +11,7 @@ export async function SEND_TO_OWNER(formData: FormData) {
   try {
     const { data, error } = await resend.emails.send({
       from: "K-PASS <reservation@cramreserveform.com>",
-      to: ["matuott1230@gmail.com", "shotakobayashi7@gmail.com"],
+      to: ["matuott1230@gmail.com"],
       subject: "K-PASS 無料受験相談予約通知",
       react: EmailTemplateOwner(formData),
     });
