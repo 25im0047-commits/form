@@ -156,7 +156,11 @@ export default function SendForm() {
     );
 
     try {
+      const sleep = (ms: number) =>
+        new Promise((resolve) => setTimeout(resolve, ms));
+
       await SEND_TO_OWNER(formData);
+      await sleep(600);
       await SEND_TO_CUSTEMER(formData);
       await insert_reservation_data(formData);
       alert(
@@ -164,6 +168,9 @@ export default function SendForm() {
       );
       router.push("/");
     } catch (error) {
+      console.error("メール送信エラー:", error);
+      alert("メール送信に失敗しました。少し時間を置いて再度お試しください。");
+      setDisabled(false);
     }
   }
 
@@ -337,17 +344,19 @@ export default function SendForm() {
             ))}
           </div>
           <div className="mt-7">
-            <button className="w-full" disabled={disabled}>
-              <Link href="/">
-                {/*日程選択のルートを置く*/}
-                <p className="bg-white border border-[#00c7ce] text-[#00c7ce] font-bold text-sm rounded-sm py-2.5 text-center hover:bg-gray-200">
-                  日時を選び直す
-                </p>
-              </Link>
-            </button>
+            <Link
+              href="/"
+              className={`block w-full ${
+                disabled ? "pointer-events-none opacity-50" : ""
+              }`}
+            >
+              <p className="bg-white border border-[#00c7ce] text-[#00c7ce] font-bold text-sm rounded-sm py-2.5 text-center hover:bg-gray-200">
+                日時を選び直す
+              </p>
+            </Link>
 
             <button
-              //type="submit"
+              type="submit"
               className={`mt-5 bg-[#00c7ce] text-white p-3 w-full rounded-sm hover:cursor-pointer hover:bg-[#00b0b8]
                 ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
               disabled={disabled}
