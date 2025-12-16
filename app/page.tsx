@@ -18,12 +18,9 @@ export default function HomePage() {
         fetch_result?.data?.map((item: any) => item.reservation_date) ?? [];
 
       setReservedSlots(reserved);
-
-      console.log("Fetched reservation dates:", reserved);
     }
 
     fetchData();
-    console.log("コンポーネントがロードされました");
   }, [router]);
 
   // baseDate is the first day shown in the week view
@@ -82,14 +79,11 @@ export default function HomePage() {
     const d = nextday(index);
     const time = `${9 + btnIndex}:00`;
 
-    console.log(y + "年" + m + "月" + d + "日" + time);
-
     const checktime = `${y}年${m}月${d}日${time}`;
 
     //チェック処理
     async function Checkdata() {
       const fetch_result = await CheckData(checktime);
-      await console.log("要素取り出し:", fetch_result);
       return fetch_result;
     }
 

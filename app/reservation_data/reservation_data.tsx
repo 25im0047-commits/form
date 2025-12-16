@@ -36,7 +36,6 @@ export async function insert_reservation_data(formData: FormData) {
   const kinds = formData.get("kinds");
   const date = formData.get("date");
 
-  console.log(name, email, phone_number, grade, school, kinds, date);
   try {
     const supabase = await createClient();
     const { error } = await supabase.from("rserve_form").insert({
@@ -48,10 +47,7 @@ export async function insert_reservation_data(formData: FormData) {
       school: school,
       reservation_date: date,
     });
-    console.log("送信成功");
-    console.log(error);
   } catch (error) {
-    console.log(error);
     return { error };
   }
 }
