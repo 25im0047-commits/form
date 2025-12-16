@@ -95,7 +95,6 @@ export default function SendForm() {
   async function DateCheck() {
     //チェック処理
     const checktime = `${year}年${month}月${day}日${time}`;
-    console.log("チェック日時:", checktime);
 
     // 選択された日時が明日以降であるかチェック
     const selectedDate = new Date(
@@ -137,8 +136,6 @@ export default function SendForm() {
 
     setDisabled(true);
 
-    console.log("送信データ:", form);
-
     //日時チェック処理
     if (await DateCheck()) {
       router.replace("/");
@@ -158,15 +155,6 @@ export default function SendForm() {
       `${form.date.year}年${form.date.month}月${form.date.day}日${form.date.time}`
     );
 
-    console.log("FormData to be sent:", Array.from(formData.entries()));
-    console.log("FormDataの中身確認:", formData.get("name"));
-    console.log("FormDataの中身確認:", formData.get("email"));
-    console.log("FormDataの中身確認:", formData.get("phone_number"));
-    console.log("FormDataの中身確認:", formData.get("grade"));
-    console.log("FormDataの中身確認:", formData.get("school"));
-    console.log("FormDataの中身確認:", formData.get("kinds"));
-    console.log("FormDataの中身確認:", formData.get("date"));
-
     try {
       await SEND_TO_OWNER(formData);
       await SEND_TO_CUSTEMER(formData);
@@ -176,7 +164,6 @@ export default function SendForm() {
       );
       router.push("/");
     } catch (error) {
-      console.error("エラーが起きてるよ！！！！！:", error);
     }
   }
 
