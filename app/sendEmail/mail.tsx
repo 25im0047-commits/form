@@ -10,7 +10,7 @@ const resend = new Resend(RESEND_API_KEY);
 export async function SEND_TO_OWNER(formData: FormData) {
   try {
     const { data, error } = await resend.emails.send({
-      from: "K-PASS <reservation@vercel.app>",
+      from: "K-PASS <reservation@kpass-form.com>",
       to: ["matuott1230@gmail.com"],
       subject: "K-PASS 無料受験相談予約通知",
       react: EmailTemplateOwner(formData),
@@ -25,7 +25,7 @@ export async function SEND_TO_CUSTEMER(formData: FormData) {
   const email_customer = formData.get("email") as string;
   try {
     const { data, error } = await resend.emails.send({
-      from: "K-PASS <reservation@vercel.app>",
+      from: "K-PASS <reservation@kpass-form.com>",
       to: [email_customer],
       subject: "K-PASS 無料受験相談予約完了通知",
       react: EmailTemplateCustemer(formData),
