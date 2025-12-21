@@ -168,7 +168,6 @@ export default function SendForm() {
       );
       router.push("/");
     } catch (error) {
-      console.error("メール送信エラー:", error);
       alert("メール送信に失敗しました。少し時間を置いて再度お試しください。");
       setDisabled(false);
     }
