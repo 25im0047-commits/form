@@ -16,6 +16,8 @@ export default function SendForm() {
   const [day, setDay] = useState<string | null>(null);
   const [time, setTime] = useState<string | null>(null);
 
+  const [pushed, setPushed] = useState(false);
+
   const [form, setForm] = useState({
     date: {
       year: "",
@@ -129,6 +131,7 @@ export default function SendForm() {
   }
 
   async function handleSubmit(e: any) {
+    setPushed(true);
     e.preventDefault();
 
     //要素があるかチェック
@@ -170,6 +173,7 @@ export default function SendForm() {
     } catch (error) {
       alert("メール送信に失敗しました。少し時間を置いて再度お試しください。");
       setDisabled(false);
+      setPushed(false);
     }
   }
 
@@ -183,187 +187,192 @@ export default function SendForm() {
     >
       <form onSubmit={handleSubmit}>
         <h1 className="text-center font-bold mb-7 pt-6">予約内容確認</h1>
-        <div className="w-[80%] mx-auto pb-30">
-          <div>
-            <p className="text-sm text-[#789b8b]">日時</p>
-            <div className="bg-white rounded-md shadow-md p-5 text-[#a8b1ab]">
-              <p className="mb-2">UTC+09:00 Asia/Tokyo</p>
-              <p className="mb-2">
-                {year}年 {month}月{day}日（
-                {
-                  ["日", "月", "火", "水", "木", "金", "土"][
-                    new Date(`${year}-${month}-${day}`).getDay()
-                  ]
-                }
-                ）
-              </p>
-              <p className="font-bold text-xl text-[#304036]">
-                {time} - {`${Number(time?.split(":")[0]) + 1}:00`}
-              </p>
-            </div>
-          </div>
-
-          {/* 氏名 */}
-          <div className="mt-7">
-            <p className="text-sm text-[#789b8b]">
-              氏名<span className="text-red-500"> *</span>{" "}
-              {errors.name && (
-                <span className="text-red-500">入力必須項目です。</span>
-              )}
-            </p>
-            <input
-              name="name"
-              value={form.name}
-              onChange={handleChange}
-              type="text"
-              className="w-full bg-white rounded-md shadow-md p-3 mt-2"
-              placeholder="例）山田 太郎"
-            />
-          </div>
-
-          {/* メール */}
-          <div className="mt-7">
-            <p className="text-sm text-[#789b8b]">
-              メールアドレス <span className="text-red-500"> *</span>
-              {errors.email && (
-                <span className="text-red-500">入力必須項目です。</span>
-              )}
-            </p>
-            <input
-              name="email"
-              value={form.email}
-              onChange={handleChange}
-              type="email"
-              className="w-full bg-white rounded-md shadow-md p-3 mt-2"
-              placeholder="例）yamada@example.com"
-            />
-          </div>
-
-          {/* 電話番号 */}
-          <div className="mt-7">
-            <p className="text-sm text-[#789b8b]">
-              電話番号（ハイフンなし） <span className="text-red-500"> *</span>
-              {errors.phone && (
-                <span className="text-red-500">入力必須項目です。</span>
-              )}
-            </p>
-            <input
-              name="phone"
-              value={form.phone}
-              onChange={handleChange}
-              type="tel"
-              pattern="[0-9]{9,14}"
-              required
-              className="w-full bg-white rounded-md shadow-md p-3 mt-2"
-              placeholder="例）08012345678"
-            />
-          </div>
-
-          {/* 学年 */}
-          <div className="mt-7 relative">
-            <p className="text-sm text-[#789b8b]">
-              学年（属性）※現在の年度の学年を入力ください。小学生は対象年齢外となります。
-              <span className="text-red-500"> *</span>{" "}
-              {errors.grade && (
-                <span className="text-red-500">入力必須項目です。</span>
-              )}
-            </p>
-            <div
-              className="w-full bg-white rounded-md shadow-md p-3 mt-2 cursor-pointer flex justify-between items-center"
-              onClick={() => setOpen(!open)}
-            >
-              <span>{form.grade || "選択してください"}</span>
-              <span>▾</span>
-            </div>
-
-            {/* ドロップダウン */}
-            {open && (
-              <div className=" absolute w-full bg-white shadow-md rounded-md mt-1 z-10">
-                {options.map((opt) => (
-                  <div
-                    key={opt}
-                    onClick={() => {
-                      // 内部 state に学年を設定する（親からの onChange が無くても動作するように）
-                      setForm((prev) => ({ ...prev, grade: opt }));
-                      setOpen(false);
-                    }}
-                    className="p-3 hover:bg-gray-100 cursor-pointer"
-                  >
-                    {opt}
-                  </div>
-                ))}
+        {pushed ? (
+          <div className="loader">Loading...</div>
+        ) : (
+          <div className="w-[80%] mx-auto pb-30">
+            <div>
+              <p className="text-sm text-[#789b8b]">日時</p>
+              <div className="bg-white rounded-md shadow-md p-5 text-[#a8b1ab]">
+                <p className="mb-2">UTC+09:00 Asia/Tokyo</p>
+                <p className="mb-2">
+                  {year}年 {month}月{day}日（
+                  {
+                    ["日", "月", "火", "水", "木", "金", "土"][
+                      new Date(`${year}-${month}-${day}`).getDay()
+                    ]
+                  }
+                  ）
+                </p>
+                <p className="font-bold text-xl text-[#304036]">
+                  {time} - {`${Number(time?.split(":")[0]) + 1}:00`}
+                </p>
               </div>
-            )}
-          </div>
+            </div>
 
-          {/* 学校 */}
-          <div className="mt-7">
-            <p className="text-sm text-[#789b8b]">
-              所属している学校名<span className="text-red-500"> *</span>{" "}
-              {errors.school && (
-                <span className="text-red-500">入力必須項目です。</span>
-              )}
-            </p>
-            <input
-              name="school"
-              value={form.school}
-              onChange={handleChange}
-              type="text"
-              className="w-full bg-white rounded-md shadow-md p-3 mt-2"
-              placeholder="例）N高等学校"
-            />
-          </div>
-
-          {/* 種類 */}
-          <div className="mt-7">
-            <p className="text-sm text-[#789b8b]">
-              お問い合わせサービス<span className="text-red-500"> *</span>{" "}
-              {errors.kinds && (
-                <span className="text-red-500">選択必須項目です。</span>
-              )}
-            </p>
-
-            {[
-              "無料受験相談（生徒＋保護者）",
-              "無料受験相談（生徒のみ）",
-              "入塾説明会（生徒＋保護者）",
-              "入塾説明会（保護者のみ）",
-            ].map((k) => (
-              <label key={k} className="hover:cursor-pointer">
-                <input
-                  type="checkbox"
-                  name="kind"
-                  value={k}
-                  onChange={handleChange}
-                  checked={form.kinds.includes(k)}
-                />{" "}
-                {k}
-                <br />
-              </label>
-            ))}
-          </div>
-          <div className="mt-7">
-            <Link
-              href="/"
-              className={`block w-full ${
-                disabled ? "pointer-events-none opacity-50" : ""
-              }`}
-            >
-              <p className="bg-white border border-[#00c7ce] text-[#00c7ce] font-bold text-sm rounded-sm py-2.5 text-center hover:bg-gray-200">
-                日時を選び直す
+            {/* 氏名 */}
+            <div className="mt-7">
+              <p className="text-sm text-[#789b8b]">
+                氏名<span className="text-red-500"> *</span>{" "}
+                {errors.name && (
+                  <span className="text-red-500">入力必須項目です。</span>
+                )}
               </p>
-            </Link>
+              <input
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                type="text"
+                className="w-full bg-white rounded-md shadow-md p-3 mt-2"
+                placeholder="例）山田 太郎"
+              />
+            </div>
 
-            <button
-              type="submit"
-              className={`mt-5 bg-[#00c7ce] text-white p-3 w-full rounded-sm hover:cursor-pointer hover:bg-[#00b0b8]
+            {/* メール */}
+            <div className="mt-7">
+              <p className="text-sm text-[#789b8b]">
+                メールアドレス <span className="text-red-500"> *</span>
+                {errors.email && (
+                  <span className="text-red-500">入力必須項目です。</span>
+                )}
+              </p>
+              <input
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                type="email"
+                className="w-full bg-white rounded-md shadow-md p-3 mt-2"
+                placeholder="例）yamada@example.com"
+              />
+            </div>
+
+            {/* 電話番号 */}
+            <div className="mt-7">
+              <p className="text-sm text-[#789b8b]">
+                電話番号（ハイフンなし）{" "}
+                <span className="text-red-500"> *</span>
+                {errors.phone && (
+                  <span className="text-red-500">入力必須項目です。</span>
+                )}
+              </p>
+              <input
+                name="phone"
+                value={form.phone}
+                onChange={handleChange}
+                type="tel"
+                pattern="[0-9]{9,14}"
+                required
+                className="w-full bg-white rounded-md shadow-md p-3 mt-2"
+                placeholder="例）08012345678"
+              />
+            </div>
+
+            {/* 学年 */}
+            <div className="mt-7 relative">
+              <p className="text-sm text-[#789b8b]">
+                学年（属性）※現在の年度の学年を入力ください。小学生は対象年齢外となります。
+                <span className="text-red-500"> *</span>{" "}
+                {errors.grade && (
+                  <span className="text-red-500">入力必須項目です。</span>
+                )}
+              </p>
+              <div
+                className="w-full bg-white rounded-md shadow-md p-3 mt-2 cursor-pointer flex justify-between items-center"
+                onClick={() => setOpen(!open)}
+              >
+                <span>{form.grade || "選択してください"}</span>
+                <span>▾</span>
+              </div>
+
+              {/* ドロップダウン */}
+              {open && (
+                <div className=" absolute w-full bg-white shadow-md rounded-md mt-1 z-10">
+                  {options.map((opt) => (
+                    <div
+                      key={opt}
+                      onClick={() => {
+                        // 内部 state に学年を設定する（親からの onChange が無くても動作するように）
+                        setForm((prev) => ({ ...prev, grade: opt }));
+                        setOpen(false);
+                      }}
+                      className="p-3 hover:bg-gray-100 cursor-pointer"
+                    >
+                      {opt}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* 学校 */}
+            <div className="mt-7">
+              <p className="text-sm text-[#789b8b]">
+                所属している学校名<span className="text-red-500"> *</span>{" "}
+                {errors.school && (
+                  <span className="text-red-500">入力必須項目です。</span>
+                )}
+              </p>
+              <input
+                name="school"
+                value={form.school}
+                onChange={handleChange}
+                type="text"
+                className="w-full bg-white rounded-md shadow-md p-3 mt-2"
+                placeholder="例）N高等学校"
+              />
+            </div>
+
+            {/* 種類 */}
+            <div className="mt-7">
+              <p className="text-sm text-[#789b8b]">
+                お問い合わせサービス<span className="text-red-500"> *</span>{" "}
+                {errors.kinds && (
+                  <span className="text-red-500">選択必須項目です。</span>
+                )}
+              </p>
+
+              {[
+                "無料受験相談（生徒＋保護者）",
+                "無料受験相談（生徒のみ）",
+                "入塾説明会（生徒＋保護者）",
+                "入塾説明会（保護者のみ）",
+              ].map((k) => (
+                <label key={k} className="hover:cursor-pointer">
+                  <input
+                    type="checkbox"
+                    name="kind"
+                    value={k}
+                    onChange={handleChange}
+                    checked={form.kinds.includes(k)}
+                  />{" "}
+                  {k}
+                  <br />
+                </label>
+              ))}
+            </div>
+            <div className="mt-7">
+              <Link
+                href="/"
+                className={`block w-full ${
+                  disabled ? "pointer-events-none opacity-50" : ""
+                }`}
+              >
+                <p className="bg-white border border-[#00c7ce] text-[#00c7ce] font-bold text-sm rounded-sm py-2.5 text-center hover:bg-gray-200">
+                  日時を選び直す
+                </p>
+              </Link>
+
+              <button
+                type="submit"
+                className={`mt-5 bg-[#00c7ce] text-white p-3 w-full rounded-sm hover:cursor-pointer hover:bg-[#00b0b8]
                 ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
-              disabled={disabled}
-            >
-              予約を確定
-            </button>
+                disabled={disabled}
+              >
+                予約を確定
+              </button>
+            </div>
           </div>
-        </div>
+        )}
       </form>
     </div>
   );
