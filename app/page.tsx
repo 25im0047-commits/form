@@ -10,6 +10,7 @@ import {
 export default function HomePage() {
   const router = useRouter();
   const [reservedSlots, setReservedSlots] = useState<string[]>([]);
+  const [pushed, setPushed] = useState(false);
   useEffect(() => {
     async function fetchData() {
       const fetch_result = await select_reservation_data();
@@ -74,6 +75,7 @@ export default function HomePage() {
   }
 
   async function Selectday(index: number, btnIndex: number) {
+    setPushed(true);
     const y = Ifyear(index);
     const m = Ifmonth(index);
     const d = nextday(index);
@@ -162,80 +164,83 @@ export default function HomePage() {
         <h3 className="text-center text-md pt-8">
           ご希望の日時を選択してください
         </h3>
-
-        <div>
-          {Array(7)
-            .fill(null)
-            .map((_, index) => (
-              <div
-                key={index}
-                className=" border-b border-[#88c6c8] w-[90%] mx-auto mb-3"
-              >
-                <h3 className="">
-                  <span
-                    className={`text-2xl ${
-                      Number(nextday(index)) === new Date().getDate() &&
-                      addDays(baseDate, index).getMonth() ===
-                        new Date().getMonth() &&
-                      addDays(baseDate, index).getFullYear() ===
-                        new Date().getFullYear()
-                        ? "text-[#00c7ce]"
-                        : ""
-                    }`}
-                  >
-                    {nextday(index)}
-                  </span>{" "}
-                  <span
-                    className={`text-[0.75rem] ${
-                      Number(nextday(index)) === new Date().getDate() &&
-                      addDays(baseDate, index).getMonth() ===
-                        new Date().getMonth() &&
-                      addDays(baseDate, index).getFullYear() ===
-                        new Date().getFullYear()
-                        ? "text-[#00c7ce]"
-                        : ""
-                    }`}
-                  >
-                    {
-                      ["日", "月", "火", "水", "木", "金", "土"][
-                        (baseDate.getDay() + index) % 7
-                      ]
-                    }
-                  </span>
-                </h3>
-                <div className="overflow-x-auto whitespace-nowrap">
-                  {Array(13)
-                    .fill(null)
-                    .map((_, btnIndex) => {
-                      const y = Ifyear(index);
-                      const m = Ifmonth(index);
-                      const d = nextday(index);
-                      const time = `${9 + btnIndex}:00`;
-                      const checktime = `${y}年${m}月${d}日${time}`;
-                      let disabled = false;
-
-                      if (reservedSlots.includes(checktime)) {
-                        disabled = true;
+        {pushed ? (
+          <div className="loader">Loading...</div>
+        ) : (
+          <div>
+            {Array(7)
+              .fill(null)
+              .map((_, index) => (
+                <div
+                  key={index}
+                  className=" border-b border-[#88c6c8] w-[90%] mx-auto mb-3"
+                >
+                  <h3 className="">
+                    <span
+                      className={`text-2xl ${
+                        Number(nextday(index)) === new Date().getDate() &&
+                        addDays(baseDate, index).getMonth() ===
+                          new Date().getMonth() &&
+                        addDays(baseDate, index).getFullYear() ===
+                          new Date().getFullYear()
+                          ? "text-[#00c7ce]"
+                          : ""
+                      }`}
+                    >
+                      {nextday(index)}
+                    </span>{" "}
+                    <span
+                      className={`text-[0.75rem] ${
+                        Number(nextday(index)) === new Date().getDate() &&
+                        addDays(baseDate, index).getMonth() ===
+                          new Date().getMonth() &&
+                        addDays(baseDate, index).getFullYear() ===
+                          new Date().getFullYear()
+                          ? "text-[#00c7ce]"
+                          : ""
+                      }`}
+                    >
+                      {
+                        ["日", "月", "火", "水", "木", "金", "土"][
+                          (baseDate.getDay() + index) % 7
+                        ]
                       }
+                    </span>
+                  </h3>
+                  <div className="overflow-x-auto whitespace-nowrap">
+                    {Array(13)
+                      .fill(null)
+                      .map((_, btnIndex) => {
+                        const y = Ifyear(index);
+                        const m = Ifmonth(index);
+                        const d = nextday(index);
+                        const time = `${9 + btnIndex}:00`;
+                        const checktime = `${y}年${m}月${d}日${time}`;
+                        let disabled = false;
 
-                      return (
-                        <button
-                          key={btnIndex}
-                          disabled={disabled}
-                          onClick={() => {
-                            Selectday(index, btnIndex);
-                          }}
-                          className={`shadow-md w-[120px] border border-[#00c7ce] text-[#00c7ce] text-xl rounded-sm px-4 py-2 my-2 mb-4 mx-1 inline-block
+                        if (reservedSlots.includes(checktime)) {
+                          disabled = true;
+                        }
+
+                        return (
+                          <button
+                            key={btnIndex}
+                            disabled={disabled}
+                            onClick={() => {
+                              Selectday(index, btnIndex);
+                            }}
+                            className={`shadow-md w-[120px] border border-[#00c7ce] text-[#00c7ce] text-xl rounded-sm px-4 py-2 my-2 mb-4 mx-1 inline-block
                             ${disabled ? "opacity-50 border-[#4a4a4a] text-[#4a4a4a] bg-[#dfdfdf] cursor-not-allowed" : "bg-white hover:bg-gray-200"}`}
-                        >
-                          {9 + btnIndex}:00
-                        </button>
-                      );
-                    })}
+                          >
+                            {9 + btnIndex}:00
+                          </button>
+                        );
+                      })}
+                  </div>
                 </div>
-              </div>
-            ))}
-        </div>
+              ))}
+          </div>
+        )}
       </div>
     </div>
   );
