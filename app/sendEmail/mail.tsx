@@ -15,7 +15,9 @@ export async function SEND_TO_OWNER(formData: FormData) {
       subject: "K-PASS 無料受験相談予約通知",
       react: EmailTemplateOwner(formData),
     });
+    console.log(error);
   } catch (error) {
+    console.log(error)
   }
 }
 
@@ -28,6 +30,8 @@ export async function SEND_TO_CUSTEMER(formData: FormData) {
       subject: "K-PASS 無料受験相談予約完了通知",
       react: EmailTemplateCustemer(formData),
     });
+    console.log(error);
   } catch (error) {
+    console.log(error);
   }
 }
