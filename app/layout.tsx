@@ -4,6 +4,11 @@ import "./globals.css";
 import Image from "next/image";
 import Link from "next/link";
 
+export const metadata: Metadata = {
+  title: "K-PASS｜受験相談＆説明会予約ページ",
+  description: "K-PASSの受験相談＆説明会予約ページです。",
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
