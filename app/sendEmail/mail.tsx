@@ -11,13 +11,13 @@ export async function SEND_TO_OWNER(formData: FormData) {
   try {
     const { data, error } = await resend.emails.send({
       from: "K-PASS <reservation@kpass-form.com>",
-      to: ["matuott1230@gmail.com"],
+      to: ["kpass.official@gmail.com"],
       subject: "K-PASS 無料受験相談予約通知",
       react: EmailTemplateOwner(formData),
     });
     console.log(error);
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 }
 
