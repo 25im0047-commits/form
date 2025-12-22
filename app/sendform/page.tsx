@@ -91,7 +91,6 @@ export default function SendForm() {
     if (form.kinds.length === 0) newErrors.kinds = true;
 
     setErrors(newErrors);
-    setPushed(false);
     return Object.keys(newErrors).length === 0;
   }
 
@@ -136,7 +135,10 @@ export default function SendForm() {
     e.preventDefault();
 
     //要素があるかチェック
-    if (!validate()) return;
+    if (!validate()) {
+      setPushed(false);
+      return;
+    }
 
     setDisabled(true);
 
@@ -319,7 +321,7 @@ export default function SendForm() {
                 onChange={handleChange}
                 type="text"
                 className="w-full bg-white rounded-md shadow-md p-3 mt-2"
-                placeholder="例）N高等学校"
+                placeholder="例）慶應義塾高校"
               />
             </div>
 
