@@ -91,6 +91,7 @@ export default function SendForm() {
     if (form.kinds.length === 0) newErrors.kinds = true;
 
     setErrors(newErrors);
+    setPushed(false);
     return Object.keys(newErrors).length === 0;
   }
 
