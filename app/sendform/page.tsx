@@ -18,7 +18,22 @@ export default function SendForm() {
 
   const [pushed, setPushed] = useState(false);
 
-  const [form, setForm] = useState({
+  type FormState = {
+    date: {
+      year: string;
+      month: string;
+      day: string;
+      time: string;
+    };
+    name: string;
+    email: string;
+    phone: string;
+    grade: string;
+    school: string;
+    kinds: string;
+  };
+
+  const [form, setForm] = useState<FormState>({
     date: {
       year: "",
       month: "",
@@ -30,7 +45,7 @@ export default function SendForm() {
     phone: "",
     grade: "",
     school: "",
-    kinds: [] as string[],
+    kinds: "",
   });
 
   useEffect(() => {
@@ -64,12 +79,10 @@ export default function SendForm() {
   function handleChange(e: any) {
     const { name, value, type, checked } = e.target;
 
-    // checkbox（複数）の処理
-    if (type === "checkbox") {
+    if (type === "radio" && name === "kinds") {
+      console.log(checked, value);
       setForm((prev) => {
-        const newKinds = checked
-          ? [...prev.kinds, value]
-          : prev.kinds.filter((v) => v !== value);
+        const newKinds = value;
 
         return { ...prev, kinds: newKinds };
       });
@@ -174,7 +187,7 @@ export default function SendForm() {
     formData.append("phone_number", form.phone);
     formData.append("grade", form.grade);
     formData.append("school", form.school);
-    formData.append("kinds", form.kinds.join(", "));
+    formData.append("kinds", form.kinds);
     formData.append(
       "date",
       `${form.date.year}年${form.date.month}月${form.date.day}日${form.date.time}`
@@ -373,8 +386,8 @@ export default function SendForm() {
               ].map((k) => (
                 <label key={k} className="hover:cursor-pointer">
                   <input
-                    type="checkbox"
-                    name="kind"
+                    type="radio"
+                    name={`kinds`}
                     value={k}
                     onChange={handleChange}
                     checked={form.kinds.includes(k)}
