@@ -95,38 +95,57 @@ export default function SendForm() {
   }
 
   async function DateCheck() {
-    //チェック処理
+    if (!year || !month || !day || !time) {
+      alert("日時情報が正しく取得できませんでした。");
+      return true;
+    }
+
+    // DB照合用（表示用文字列）
     const checktime = `${year}年${month}月${day}日${time}`;
 
-    // 選択された日時が明日以降であるかチェック
+    // time を分解（9:00 問題対策）
+    const [hourStr, minuteStr] = time.split(":");
+    const hour = Number(hourStr);
+    const minute = Number(minuteStr);
+
+    // 数値で Date を生成（Safari完全対応）
     const selectedDate = new Date(
-      `${year}-${month?.padStart(2, "0")}-${day?.padStart(2, "0")}T${time}:00`
+      Number(year),
+      Number(month) - 1,
+      Number(day),
+      hour,
+      minute,
+      0
     );
+
+    // 日付の妥当性チェック
+    if (isNaN(selectedDate.getTime())) {
+      alert("日付または時刻の形式が不正です。入力内容を確認してください。");
+      return true;
+    }
+
+    // 明日以降かどうかチェック
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     tomorrow.setHours(0, 0, 0, 0);
 
     if (selectedDate < tomorrow) {
-      alert("エラーが発生しました。");
+      alert(
+        "エラーが発生しました。予約日時は明日以降の日付を選択してください。"
+      );
       return true;
     }
 
-    // 日付の妥当性をチェック
-    const dateStr = `${year}-${month?.padStart(2, "0")}-${day?.padStart(2, "0")}`;
-    const timeStr = time;
-    const dateObj = new Date(`${dateStr}T${timeStr}:00`);
-    if (isNaN(dateObj.getTime())) {
-      alert("エラーが発生しました。");
-      return true;
-    }
-
-    //時間を改竄されても、予約時間が被らないようにする処理
+    // 予約重複チェック（時間改竄対策）
     const fetch_result = await CheckData(checktime);
     if (fetch_result.data && fetch_result.data.length > 0) {
-      alert("エラーが発生しました。");
+      alert(
+        "選択された時間帯はすでに予約済みです。別の時間を選択してください。"
+      );
       return true;
     }
 
+    // 問題なし
     return false;
   }
 
@@ -165,6 +184,18 @@ export default function SendForm() {
       const sleep = (ms: number) =>
         new Promise((resolve) => setTimeout(resolve, ms));
 
+      try {
+        const createMeet = async () => {
+          const res = await fetch("/api/create-meet", { method: "POST" });
+          const data = await res.json();
+          alert(JSON.stringify(data, null, 2));
+          alert(data.meetLink);
+        };
+        await createMeet();
+      } catch (error) {
+        console.log("Google Meet link creation failed:", error);
+        return;
+      }
       await SEND_TO_OWNER(formData);
       await sleep(600);
       await SEND_TO_CUSTEMER(formData);
