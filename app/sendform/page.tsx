@@ -121,7 +121,6 @@ export default function SendForm() {
     const hour = Number(hourStr);
     const minute = Number(minuteStr);
 
-    // 数値で Date を生成（Safari完全対応）
     const selectedDate = new Date(
       Number(year),
       Number(month) - 1,
@@ -197,18 +196,29 @@ export default function SendForm() {
       const sleep = (ms: number) =>
         new Promise((resolve) => setTimeout(resolve, ms));
 
-      try {
-        const createMeet = async () => {
-          const res = await fetch("/api/create-meet", { method: "POST" });
-          const data = await res.json();
-          alert(JSON.stringify(data, null, 2));
-          alert(data.meetLink);
-        };
-        await createMeet();
-      } catch (error) {
-        console.log("Google Meet link creation failed:", error);
-        return;
+      //================== Meetリンク生成 ==================
+      let startAt = "";
+      async function createMeet() {
+        console.log("Creating Meet for:", startAt);
+        const res = await fetch("/api/create-meet", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            startAt,
+          }),
+        });
+        const { meetLink } = await res.json();
+        alert(meetLink);
       }
+      // time を分解（9:00 問題対策）
+      const [hourStr, minuteStr] = form.date.time.split(":");
+      const hour = Number(hourStr);
+      const pad = (n: number) => String(n).padStart(2, "0");
+      startAt = `${form.date.year}-${form.date.month}-${form.date.day}T${pad(hour) + ":00"}`;
+
+      createMeet();
+      //===================================================
+
       await SEND_TO_OWNER(formData);
       await sleep(600);
       await SEND_TO_CUSTEMER(formData);
