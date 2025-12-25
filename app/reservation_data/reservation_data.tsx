@@ -6,7 +6,7 @@ export async function select_reservation_data() {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from("rserve_form")
+      .from("rserve_form_public")
       .select("reservation_date");
     return { data };
   } catch (error) {
@@ -18,7 +18,7 @@ export async function CheckData(checktime: string) {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
-      .from("rserve_form")
+      .from("rserve_form_public")
       .select("reservation_date")
       .eq("reservation_date", checktime);
     return { data };
