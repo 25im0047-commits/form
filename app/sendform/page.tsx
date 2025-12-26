@@ -18,7 +18,23 @@ export default function SendForm() {
 
   const [pushed, setPushed] = useState(false);
 
-  const [form, setForm] = useState({
+  type FormState = {
+    date: {
+      year: string;
+      month: string;
+      day: string;
+      time: string;
+    };
+    name: string;
+    name_kana: string;
+    email: string;
+    phone: string;
+    grade: string;
+    school: string;
+    kinds: string;
+  };
+
+  const [form, setForm] = useState<FormState>({
     date: {
       year: "",
       month: "",
@@ -26,11 +42,12 @@ export default function SendForm() {
       time: "",
     },
     name: "",
+    name_kana: "",
     email: "",
     phone: "",
     grade: "",
     school: "",
-    kinds: [] as string[],
+    kinds: "",
   });
 
   useEffect(() => {
@@ -64,12 +81,10 @@ export default function SendForm() {
   function handleChange(e: any) {
     const { name, value, type, checked } = e.target;
 
-    // checkbox（複数）の処理
-    if (type === "checkbox") {
+    if (type === "radio" && name === "kinds") {
+      console.log(checked, value);
       setForm((prev) => {
-        const newKinds = checked
-          ? [...prev.kinds, value]
-          : prev.kinds.filter((v) => v !== value);
+        const newKinds = value;
 
         return { ...prev, kinds: newKinds };
       });
@@ -84,6 +99,7 @@ export default function SendForm() {
     const newErrors: Record<string, boolean> = {};
 
     if (!form.name) newErrors.name = true;
+    if (!form.name_kana) newErrors.name_kana = true;
     if (!form.email) newErrors.email = true;
     if (!form.phone) newErrors.phone = true;
     if (!form.grade) newErrors.grade = true;
@@ -95,38 +111,56 @@ export default function SendForm() {
   }
 
   async function DateCheck() {
-    //チェック処理
+    if (!year || !month || !day || !time) {
+      alert("日時情報が正しく取得できませんでした。");
+      return true;
+    }
+
+    // DB照合用（表示用文字列）
     const checktime = `${year}年${month}月${day}日${time}`;
 
-    // 選択された日時が明日以降であるかチェック
+    // time を分解（9:00 問題対策）
+    const [hourStr, minuteStr] = time.split(":");
+    const hour = Number(hourStr);
+    const minute = Number(minuteStr);
+
     const selectedDate = new Date(
-      `${year}-${month?.padStart(2, "0")}-${day?.padStart(2, "0")}T${time}:00`
+      Number(year),
+      Number(month) - 1,
+      Number(day),
+      hour,
+      minute,
+      0
     );
+
+    // 日付の妥当性チェック
+    if (isNaN(selectedDate.getTime())) {
+      alert("日付または時刻の形式が不正です。入力内容を確認してください。");
+      return true;
+    }
+
+    // 明日以降かどうかチェック
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     tomorrow.setHours(0, 0, 0, 0);
 
     if (selectedDate < tomorrow) {
-      alert("エラーが発生しました。");
+      alert(
+        "エラーが発生しました。予約日時は明日以降の日付を選択してください。"
+      );
       return true;
     }
 
-    // 日付の妥当性をチェック
-    const dateStr = `${year}-${month?.padStart(2, "0")}-${day?.padStart(2, "0")}`;
-    const timeStr = time;
-    const dateObj = new Date(`${dateStr}T${timeStr}:00`);
-    if (isNaN(dateObj.getTime())) {
-      alert("エラーが発生しました。");
-      return true;
-    }
-
-    //時間を改竄されても、予約時間が被らないようにする処理
+    // 予約重複チェック（時間改竄対策）
     const fetch_result = await CheckData(checktime);
     if (fetch_result.data && fetch_result.data.length > 0) {
-      alert("エラーが発生しました。");
+      alert(
+        "選択された時間帯はすでに予約済みです。別の時間を選択してください。"
+      );
       return true;
     }
 
+    // 問題なし
     return false;
   }
 
@@ -151,30 +185,63 @@ export default function SendForm() {
     const formData = new FormData();
 
     formData.append("name", form.name);
+    formData.append("name_kana", form.name_kana);
     formData.append("email", form.email);
     formData.append("phone_number", form.phone);
     formData.append("grade", form.grade);
     formData.append("school", form.school);
-    formData.append("kinds", form.kinds.join(", "));
+    formData.append("kinds", form.kinds);
     formData.append(
       "date",
       `${form.date.year}年${form.date.month}月${form.date.day}日${form.date.time}`
     );
 
+    const formData_DB = formData;
+
     try {
       const sleep = (ms: number) =>
         new Promise((resolve) => setTimeout(resolve, ms));
 
+      //================== Meetリンク生成 ==================
+      const [hourStr, minuteStr] = form.date.time.split(":");
+      const hour = Number(hourStr);
+      const minute = Number(minuteStr);
+
+      const pad = (n: number) => String(n).padStart(2, "0");
+
+      const startAt = `${form.date.year}-${form.date.month}-${form.date.day}T${pad(hour)}:${pad(minute)}`;
+
+      console.log("Creating Meet for:", startAt);
+
+      const res = await fetch("/api/create-meet", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ startAt }),
+      });
+
+      const { meetLink } = await res.json();
+
+      if (!meetLink) {
+        throw new Error("Meet link generation failed");
+      }
+
+      formData.append("meetLink", meetLink);
+      //===================================================
+
+      //=================== メール送信 ======================
       await SEND_TO_OWNER(formData);
       await sleep(600);
       await SEND_TO_CUSTEMER(formData);
-      await insert_reservation_data(formData);
+      //===================================================
+      //=================== DBにinsert ======================
+      await insert_reservation_data(formData_DB);
+      //===================================================
       alert(
         "予約が完了しました。\nご登録いただいたメールアドレスに確認メールを送信しました。"
       );
       router.push("/");
     } catch (error) {
-      alert("メール送信に失敗しました。少し時間を置いて再度お試しください。");
+      alert("エラーが発生しました。少し時間を置いて再度お試しください。");
       setDisabled(false);
       setPushed(false);
     }
@@ -228,6 +295,24 @@ export default function SendForm() {
                 type="text"
                 className="w-full bg-white rounded-md shadow-md p-3 mt-2"
                 placeholder="例）山田 太郎"
+              />
+            </div>
+
+            {/* フリガナ */}
+            <div className="mt-7">
+              <p className="text-sm text-[#789b8b]">
+                フリガナ<span className="text-red-500"> *</span>{" "}
+                {errors.name_kana && (
+                  <span className="text-red-500">入力必須項目です。</span>
+                )}
+              </p>
+              <input
+                name="name_kana"
+                value={form.name_kana}
+                onChange={handleChange}
+                type="text"
+                className="w-full bg-white rounded-md shadow-md p-3 mt-2"
+                placeholder="例）ヤマダ タロウ"
               />
             </div>
 
@@ -342,8 +427,8 @@ export default function SendForm() {
               ].map((k) => (
                 <label key={k} className="hover:cursor-pointer">
                   <input
-                    type="checkbox"
-                    name="kind"
+                    type="radio"
+                    name={`kinds`}
                     value={k}
                     onChange={handleChange}
                     checked={form.kinds.includes(k)}
