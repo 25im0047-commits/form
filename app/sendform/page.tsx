@@ -192,43 +192,52 @@ export default function SendForm() {
       `${form.date.year}年${form.date.month}月${form.date.day}日${form.date.time}`
     );
 
+    const formData_DB = formData;
+
     try {
       const sleep = (ms: number) =>
         new Promise((resolve) => setTimeout(resolve, ms));
 
       //================== Meetリンク生成 ==================
-      let startAt = "";
-      async function createMeet() {
-        console.log("Creating Meet for:", startAt);
-        const res = await fetch("/api/create-meet", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            startAt,
-          }),
-        });
-        const { meetLink } = await res.json();
-        alert(meetLink);
-      }
-      // time を分解（9:00 問題対策）
       const [hourStr, minuteStr] = form.date.time.split(":");
       const hour = Number(hourStr);
-      const pad = (n: number) => String(n).padStart(2, "0");
-      startAt = `${form.date.year}-${form.date.month}-${form.date.day}T${pad(hour) + ":00"}`;
+      const minute = Number(minuteStr);
 
-      createMeet();
+      const pad = (n: number) => String(n).padStart(2, "0");
+
+      const startAt = `${form.date.year}-${form.date.month}-${form.date.day}T${pad(hour)}:${pad(minute)}`;
+
+      console.log("Creating Meet for:", startAt);
+
+      const res = await fetch("/api/create-meet", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ startAt }),
+      });
+
+      const { meetLink } = await res.json();
+
+      if (!meetLink) {
+        throw new Error("Meet link generation failed");
+      }
+
+      formData.append("meetLink", meetLink);
       //===================================================
 
+      //=================== メール送信 ======================
       await SEND_TO_OWNER(formData);
       await sleep(600);
       await SEND_TO_CUSTEMER(formData);
-      await insert_reservation_data(formData);
+      //===================================================
+      //=================== DBにinsert ======================
+      await insert_reservation_data(formData_DB);
+      //===================================================
       alert(
         "予約が完了しました。\nご登録いただいたメールアドレスに確認メールを送信しました。"
       );
       router.push("/");
     } catch (error) {
-      alert("メール送信に失敗しました。少し時間を置いて再度お試しください。");
+      alert("エラーが発生しました。少し時間を置いて再度お試しください。");
       setDisabled(false);
       setPushed(false);
     }
