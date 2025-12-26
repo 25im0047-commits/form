@@ -29,10 +29,10 @@ export async function POST(req: Request) {
     }
 
     const event = await calendar.events.insert({
-      calendarId: "primary", // 管理者のカレンダー
+      calendarId: "primary", // 管理者のカレンダーに予定を追加する
       conferenceDataVersion: 1,
       requestBody: {
-        summary: "オンライン面談",
+        summary: "テスト_オンライン面談",
         start: {
           dateTime: new Date(startAt).toISOString(),
           timeZone: "Asia/Tokyo",

@@ -1,8 +1,6 @@
-// app/lib/auth.ts
 import GoogleProvider from "next-auth/providers/google";
 import type { NextAuthOptions } from "next-auth";
 
-// Extend next-auth types to include accessToken on Session and JWT
 declare module "next-auth" {
   interface Session {
     accessToken?: string;
@@ -24,8 +22,8 @@ export const authOptions: NextAuthOptions = {
     params: {
       scope:
         "openid email profile https://www.googleapis.com/auth/calendar",
-      access_type: "offline",   // ← 必須
-      prompt: "consent",        // ← 超重要
+      access_type: "offline",
+      prompt: "consent",
     },
   },
 }),
