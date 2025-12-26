@@ -2,6 +2,7 @@ import React from "react";
 
 export function EmailTemplateOwner(formData: FormData) {
   const name = formData.get("name") as string;
+  const name_kana = formData.get("name_kana") as string;
   const email = formData.get("email") as string;
   const phone = formData.get("phone_number") as string;
   const grade = formData.get("grade") as string;
@@ -21,6 +22,11 @@ export function EmailTemplateOwner(formData: FormData) {
               <td className="py-1 pr-2">予約者</td>
               <td className="py-1 px-2">:</td>
               <td className="py-1 pl-2">{name}</td>
+            </tr>
+            <tr>
+              <td className="py-1 pr-2">フリガナ</td>
+              <td className="py-1 px-2">:</td>
+              <td className="py-1 pl-2">{name_kana}</td>
             </tr>
             <tr>
               <td className="py-1 pr-2">メールアドレス</td>

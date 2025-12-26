@@ -26,6 +26,7 @@ export default function SendForm() {
       time: string;
     };
     name: string;
+    name_kana: string;
     email: string;
     phone: string;
     grade: string;
@@ -41,6 +42,7 @@ export default function SendForm() {
       time: "",
     },
     name: "",
+    name_kana: "",
     email: "",
     phone: "",
     grade: "",
@@ -97,6 +99,7 @@ export default function SendForm() {
     const newErrors: Record<string, boolean> = {};
 
     if (!form.name) newErrors.name = true;
+    if (!form.name_kana) newErrors.name_kana = true;
     if (!form.email) newErrors.email = true;
     if (!form.phone) newErrors.phone = true;
     if (!form.grade) newErrors.grade = true;
@@ -182,6 +185,7 @@ export default function SendForm() {
     const formData = new FormData();
 
     formData.append("name", form.name);
+    formData.append("name_kana", form.name_kana);
     formData.append("email", form.email);
     formData.append("phone_number", form.phone);
     formData.append("grade", form.grade);
@@ -291,6 +295,24 @@ export default function SendForm() {
                 type="text"
                 className="w-full bg-white rounded-md shadow-md p-3 mt-2"
                 placeholder="例）山田 太郎"
+              />
+            </div>
+
+            {/* フリガナ */}
+            <div className="mt-7">
+              <p className="text-sm text-[#789b8b]">
+                フリガナ<span className="text-red-500"> *</span>{" "}
+                {errors.name_kana && (
+                  <span className="text-red-500">入力必須項目です。</span>
+                )}
+              </p>
+              <input
+                name="name_kana"
+                value={form.name_kana}
+                onChange={handleChange}
+                type="text"
+                className="w-full bg-white rounded-md shadow-md p-3 mt-2"
+                placeholder="例）ヤマダ タロウ"
               />
             </div>
 
