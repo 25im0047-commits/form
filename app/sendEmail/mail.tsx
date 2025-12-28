@@ -44,7 +44,7 @@ export async function SEND_TO_OWNER(formData: FormData) {
       from: "K-PASS <reservation@kpass-form.com>",
       to: ["kpass.official@gmail.com"],
       subject: "K-PASS 無料受験相談予約通知",
-      react: EmailTemplateOwner(formData),
+      react: EmailTemplateOwner(sanitizedFormData),
     });
     console.log(error);
   } catch (error) {
@@ -61,7 +61,7 @@ export async function SEND_TO_CUSTEMER(formData: FormData) {
       from: "K-PASS <reservation@kpass-form.com>",
       to: [email_customer],
       subject: "K-PASS 無料受験相談予約完了通知",
-      react: EmailTemplateCustemer(formData),
+      react: EmailTemplateCustemer(sanitizedFormData),
     });
     console.log(error);
   } catch (error) {

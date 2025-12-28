@@ -1,15 +1,15 @@
 import React from "react";
 
-export function EmailTemplateOwner(formData: FormData) {
-  const name = formData.get("name") as string;
-  const name_kana = formData.get("name_kana") as string;
-  const email = formData.get("email") as string;
-  const phone = formData.get("phone_number") as string;
-  const grade = formData.get("grade") as string;
-  const school = formData.get("school") as string;
-  const kinds = formData.get("kinds") as string;
-  const date = formData.get("date") as string;
-  const meetLink = formData.get("meetLink") as string;
+export function EmailTemplateOwner(sanitizedFormData: FormData) {
+  const name = sanitizedFormData.get("name") as string;
+  const name_kana = sanitizedFormData.get("name_kana") as string;
+  const email = sanitizedFormData.get("email") as string;
+  const phone = sanitizedFormData.get("phone_number") as string;
+  const grade = sanitizedFormData.get("grade") as string;
+  const school = sanitizedFormData.get("school") as string;
+  const kinds = sanitizedFormData.get("kinds") as string;
+  const date = sanitizedFormData.get("date") as string;
+  const meetLink = sanitizedFormData.get("meetLink") as string;
 
   return (
     <>
@@ -105,9 +105,7 @@ export function EmailTemplateCustemer(formData: FormData) {
             ────────────────────
           </span>
           <br />
-          【日時】
-          <br />
-          <span className="font-semibold">{date} ~</span>
+          【日時】<span className="font-semibold">{date} ~</span>
           <br />
           <br />
           【相談形式】 オンライン（Google Meet）
