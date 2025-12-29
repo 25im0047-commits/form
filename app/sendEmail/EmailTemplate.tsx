@@ -62,7 +62,18 @@ export function EmailTemplateOwner(formData: FormData) {
               <td className="py-1 pr-2">Meetリンク</td>
               <td className="py-1 px-2">:</td>
               <td className="py-1 pl-2">
-                <a href={meetLink}>{meetLink}</a>
+                {meetLink ? (
+                  <a
+                    href={meetLink}
+                    className="text-blue-600 underline break-all tracking-wide"
+                  >
+                    {meetLink}
+                  </a>
+                ) : (
+                  <span className="text-red-600">
+                    ※エラーにより、参加URLを発行できていません。後ほどの連絡をお願いします。
+                  </span>
+                )}
               </td>
             </tr>
           </tbody>
@@ -82,6 +93,17 @@ export function EmailTemplateCustemer(formData: FormData) {
   const date = formData.get("date") as string;
   const meetLink = formData.get("meetLink") as string;
 
+  function addOneHourFromJapaneseDate(dateStr: string): string {
+    const match = dateStr.match(/(\d{1,2}):(\d{2})/);
+    if (!match) throw new Error("time not found");
+
+    let hour = Number(match[1]);
+    const minute = match[2];
+
+    hour = (hour + 1) % 24;
+
+    return `${String(hour).padStart(2, "0")}:${minute}`;
+  }
   return (
     <>
       <div className="p-4 font-sans text-sm leading-relaxed tracking-normal text-gray-800">
@@ -106,8 +128,9 @@ export function EmailTemplateCustemer(formData: FormData) {
           </span>
           <br />
           【日時】
-          <br />
-          <span className="font-semibold">{date} ~</span>
+          <span className="font-semibold">
+            {date} ~ {addOneHourFromJapaneseDate(date)}
+          </span>
           <br />
           <br />
           【相談形式】 オンライン（Google Meet）
