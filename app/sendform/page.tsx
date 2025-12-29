@@ -202,42 +202,33 @@ export default function SendForm() {
     try {
       const sleep = (ms: number) =>
         new Promise((resolve) => setTimeout(resolve, ms));
-
-      //================== Meetリンク生成 ==================
-      const [hourStr, minuteStr] = form.date.time.split(":");
-      const hour = Number(hourStr);
-      const minute = Number(minuteStr);
-
-      const pad = (n: number) => String(n).padStart(2, "0");
-
-      const startAt = `${form.date.year}-${form.date.month}-${form.date.day}T${pad(hour)}:${pad(minute)}`;
-
-      console.log("Creating Meet for:", startAt);
-
-      const res = await fetch("/api/create-meet", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ startAt }),
-      });
-
-      const { meetLink } = await res.json();
-
-      if (!meetLink) {
-        throw new Error("Meet link generation failed");
-      }
-
-      formData.append("meetLink", meetLink);
-      //===================================================
       //=================== DBにinsert ======================
       const dbResult = await insert_reservation_data(formData_DB);
       //===================================================
-      
+
       // スパム判定による処理
-      if(dbResult.error){
-        alert(
-          "エラーが発生しました。少し時間を置いて再度お試しください。"
-        );
+      if (dbResult.error) {
+        alert("エラーが発生しました。少し時間を置いて再度お試しください。");
       } else {
+        //このelseの中であってたよね？meetリンク生成とカレンダーに追加！!!!
+        //================== Meetリンク生成 ==================
+        const [hourStr, minuteStr] = form.date.time.split(":");
+        const hour = Number(hourStr);
+        const minute = Number(minuteStr);
+        const pad = (n: number) => String(n).padStart(2, "0");
+        const startAt = `${form.date.year}-${form.date.month}-${form.date.day}T${pad(hour)}:${pad(minute)}`;
+        console.log("Creating Meet for:", startAt);
+        const res = await fetch("/api/create-meet", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ startAt }),
+        });
+        const { meetLink } = await res.json();
+        if (!meetLink) {
+          throw new Error("Meet link generation failed");
+        }
+        formData.append("meetLink", meetLink);
+        //===================================================
         //=================== メール送信 ======================
         await SEND_TO_OWNER(formData);
         await sleep(600);
