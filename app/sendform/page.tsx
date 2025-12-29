@@ -264,7 +264,19 @@ export default function SendForm() {
       }}
     >
       <form onSubmit={handleSubmit}>
-        <h1 className="text-center font-bold mb-7 pt-6">予約内容確認</h1>
+        <div className="grid grid-cols-3">
+          <Link
+            href="/"
+            className={`block w-[110px] m-auto ${
+              disabled ? "pointer-events-none opacity-50" : ""
+            }`}
+          >
+            <p className="bg-white border border-[#30403687] text-[#30403687] font-bold text-sm rounded-sm py-1.5 text-center hover:bg-gray-200">
+              日時を選び直す
+            </p>
+          </Link>
+          <h1 className="text-center font-bold mb-7 pt-6">予約内容確認</h1>
+        </div>
         {pushed ? (
           <div className="loader">Loading...</div>
         ) : (
