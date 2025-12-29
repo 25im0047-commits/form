@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { SEND_TO_OWNER, SEND_TO_CUSTEMER } from "@/app/sendEmail/mail";
 import { insert_reservation_data } from "@/app/reservation_data/reservation_data";
 import { CheckData } from "@/app/reservation_data/reservation_data";
+import { error } from "console";
 
 export default function SendForm() {
   const router = useRouter();
@@ -234,11 +235,18 @@ export default function SendForm() {
       await SEND_TO_CUSTEMER(formData);
       //===================================================
       //=================== DBにinsert ======================
-      await insert_reservation_data(formData_DB);
+      const dbResult = await insert_reservation_data(formData_DB);
       //===================================================
-      alert(
-        "予約が完了しました。\nご登録いただいたメールアドレスに確認メールを送信しました。"
-      );
+      
+      if(dbResult.error){
+        alert(
+          "エラーが発生しました。少し時間を置いて再度お試しください。"
+        );
+      } else {
+        alert(
+          "予約が完了しました。\nご登録いただいたメールアドレスに確認メールを送信しました。"
+        );
+      }
       router.push("/");
     } catch (error) {
       alert("エラーが発生しました。少し時間を置いて再度お試しください。");

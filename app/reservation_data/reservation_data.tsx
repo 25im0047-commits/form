@@ -47,9 +47,15 @@ export async function insert_reservation_data(formData: FormData) {
       school: school,
       reservation_date: date,
     });
-    console.log("insert error", error);
+    if (error){
+      return { success:false, error };
+    } else {
+      return { success:true };
+    }
+
+
   } catch (error) {
-    console.log(error)
+    console.log("error", error);
     return { error };
   }
 }
