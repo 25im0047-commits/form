@@ -228,21 +228,21 @@ export default function SendForm() {
 
       formData.append("meetLink", meetLink);
       //===================================================
-
-      //=================== メール送信 ======================
-      await SEND_TO_OWNER(formData);
-      await sleep(600);
-      await SEND_TO_CUSTEMER(formData);
-      //===================================================
       //=================== DBにinsert ======================
       const dbResult = await insert_reservation_data(formData_DB);
       //===================================================
       
+      // スパム判定による処理
       if(dbResult.error){
         alert(
           "エラーが発生しました。少し時間を置いて再度お試しください。"
         );
       } else {
+        //=================== メール送信 ======================
+        await SEND_TO_OWNER(formData);
+        await sleep(600);
+        await SEND_TO_CUSTEMER(formData);
+        //===================================================
         alert(
           "予約が完了しました。\nご登録いただいたメールアドレスに確認メールを送信しました。"
         );
