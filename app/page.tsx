@@ -122,19 +122,19 @@ export default function HomePage() {
   return (
     <div className="mt-2">
       <div className="h-[20%] mt-2">
-        <div className=" grid grid-cols-5 grid-rows-1 w-[90%] mx-auto">
+        <div className=" grid grid-cols-1 gap-3 md:grid-cols-5 grid-rows-1 w-[90%] mx-auto">
           {/* 前の週ボタン */}
           <button
             className={` ${
               !canGoPrev ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-200"
-            } bg-white rounded-md font-bold m-2 my-1 px-4 py-2 text-[#00c7ce] shadow-md`}
+            } bg-white rounded-md font-bold m-2 my-1 px-4 py-2 text-[#00c7ce] shadow-md order-2 md:order-1`}
             disabled={!canGoPrev}
             onClick={prevWeek}
           >
             ＜ 前の週
           </button>
 
-          <div className="col-span-2">
+          <div className=" md:col-span-2 order- md:order-2">
             <p className="text-center grid grid-cols-2 grid-rows-2 items-end">
               <span className="text-sm col-span-1 place-self-end mr-3">
                 {`${year}`}年
@@ -146,7 +146,7 @@ export default function HomePage() {
           </div>
 
           <button
-            className="bg-white rounded-md font-bold m-2 my-1 px-4 py-2 hover:bg-gray-200 text-[#00c7ce] shadow-md"
+            className="bg-white rounded-md font-bold m-2 my-1 px-4 py-2 hover:bg-gray-200 text-[#00c7ce] shadow-md order-3"
             onClick={nextWeek}
           >
             次の週 ＞
@@ -154,7 +154,7 @@ export default function HomePage() {
 
           {/* 右端のボタン（機能を次の週に統一） */}
           <button
-            className="bg-white rounded-md font-bold m-2 my-1 px-4 py-2 hover:bg-gray-200 text-[#00c7ce] shadow-md"
+            className=" hidden md:block bg-white rounded-md font-bold m-2 my-1 px-4 py-2 hover:bg-gray-200 text-[#00c7ce] shadow-md order-4"
             onClick={() => setBaseDate(addDays(today, 1))}
           >
             最短日時
