@@ -47,7 +47,9 @@ export async function insert_reservation_data(formData: FormData) {
       school: school,
       reservation_date: date,
     });
+    console.log("insert error", error);
   } catch (error) {
+    console.log(error)
     return { error };
   }
 }
