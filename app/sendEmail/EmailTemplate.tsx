@@ -105,9 +105,7 @@ export function EmailTemplateCustemer(formData: FormData) {
             ────────────────────
           </span>
           <br />
-          【日時】
-          <br />
-          <span className="font-semibold">{date} ~</span>
+          【日時】<span className="font-semibold">{date} ~</span>
           <br />
           <br />
           【相談形式】 オンライン（Google Meet）
