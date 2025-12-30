@@ -136,6 +136,9 @@ export function EmailTemplateCustemer(formData: FormData) {
           【相談形式】 オンライン（Google Meet）
           <br />
           <br />
+          【お問合せサービス】 {kinds}
+          <br />
+          <br />
           【参加用URL】
           <br />
           {meetLink ? (
@@ -201,6 +204,9 @@ export function EmailTemplateCustemer(formData: FormData) {
             K-PASS 受験相談窓口
             <br />
             ※ご連絡は公式LINEよりお願いいたします
+          </span>
+          <span className="tracking-wide text-gray-500">
+            ────────────────────
           </span>
         </p>
       </div>
