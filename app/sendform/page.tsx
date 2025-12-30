@@ -206,7 +206,7 @@ export default function SendForm() {
       //=================== DBにinsert ======================
       const dbResult = await insert_reservation_data(formData_DB);
       if (dbResult.error) {
-        throw new Error("Database insertion failed");
+        throw new Error("Database insertion failed", { cause: dbResult.error });
       }
       //===================================================
 
@@ -230,18 +230,6 @@ export default function SendForm() {
       }
       formData.append("meetLink", data.meetLink);
       const eventId = data.eventId;
-
-      // カレンダー削除関数
-      async function DeleteMeet() {
-        await fetch("/api/delete-meet", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ eventId }),
-        });
-      }
-      //~~~実行すると作成されたMeetイベントが削除されるはず~~~
-      await sleep(2000);
-      await DeleteMeet();
       //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       //===================================================
 
@@ -253,7 +241,6 @@ export default function SendForm() {
       }
       await sleep(600);
 
-      // ここからうまくいってなさそう
       const SEND_TO_CUSTOMER_ERROR = await SEND_TO_CUSTEMER(formData);
       if (SEND_TO_CUSTOMER_ERROR.error) {
         throw new Error("Email sending to customer failed");
@@ -264,10 +251,14 @@ export default function SendForm() {
       );
       router.push("/");
     } catch (error) {
+      alert("エラーが発生しました。少し時間を置いて再度お試しください。");
+      router.push("/");
+      if (error instanceof Error && error.cause) {
+        return;
+      }
       // ここの最適化は後で考える予定
       await delete_reservation_data(); //INSERTデータの削除
       // カレンダー削除
-      alert("エラーが発生しました。少し時間を置いて再度お試しください。");
       setDisabled(false);
       setPushed(false);
     }
