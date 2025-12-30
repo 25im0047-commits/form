@@ -36,35 +36,54 @@ function sanitizeFormData(formData: FormData): FormData {
   return sanitized;
 }
 
+type EmailResult = {
+  success: boolean;
+  error: any;
+};
+
 // 塾に対してメールを送信する部品
 export async function SEND_TO_OWNER(formData: FormData) {
   const sanitizedFormData = sanitizeFormData(formData);
   try {
-    const { data, error } = await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: "K-PASS <reservation@kpass-form.com>",
       to: ["matuott1230@gmail.com"],
       subject: "K-PASS 無料受験相談予約通知",
       react: EmailTemplateOwner(formData),
     });
-    console.log(error);
+    // resendのエラーチェック
+    if (error) {
+      return {success: false, error};
+    }
+
+    // 成功
+    return({success: true,  error:null });
   } catch (error) {
-    console.log(error);
+    // 例外(ネットワークエラーなど)
+    return({ success: false, error }); 
   }
 }
 
+
+
 // お客さんにメールを送信する部品
 export async function SEND_TO_CUSTEMER(formData: FormData) {
+  console.log("顧客メール関数の実行");
   const sanitizedFormData = sanitizeFormData(formData);
   const email_customer = formData.get("email") as string;
   try {
-    const { data, error } = await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: "K-PASS <reservation@kpass-form.com>",
       to: [email_customer],
       subject: "K-PASS 無料受験相談予約完了通知",
       react: EmailTemplateCustemer(formData),
     });
-    console.log(error);
+    // resendのエラーチェック
+    if (error) {
+      return({success: false, error});
+    }
+    return({success:true, error });
   } catch (error) {
-    console.log(error);
+    return({success : false, error});
   }
 }

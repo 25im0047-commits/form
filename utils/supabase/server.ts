@@ -25,3 +25,12 @@ export async function createClient() {
     }
   )
 }
+
+// 2. 管理者用クライアント（RLSを無視する / 神権限）
+export async function createAdminClient() {
+  const { createClient } = await import('@supabase/supabase-js')
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY! // ★service_roleキーを使用
+  )
+}

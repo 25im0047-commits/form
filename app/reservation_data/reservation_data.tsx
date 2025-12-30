@@ -1,6 +1,8 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
+import { createClient, createAdminClient  } from "@/utils/supabase/server";
+import { headers } from 'next/headers';
+
 
 export async function select_reservation_data() {
   try {
@@ -59,3 +61,32 @@ export async function insert_reservation_data(formData: FormData) {
     return { error };
   }
 }
+
+export async function delete_reservation_data() {
+  // 1. ユーザーのipアドレスを取得するを見つける
+  const headerList = await headers();
+  const userIpReal = headerList.get('x-forwarded-for');
+  const userIp = userIpReal ? userIpReal.split(',')[0]: '222222';
+  console.log("userIp", userIp);
+  // 2. supabaseからinsertしたデータを取得
+  const supabase_admin= await createAdminClient();
+  const id_record = await supabase_admin
+  .from('rserve_form')
+  .select('id')
+  .eq('ip_address', userIp)
+  .order('created_at', { ascending: false })
+  .limit(1)
+  .single();
+  console.log("id_record", id_record);
+
+  // 3. そのIDで消す
+  if (id_record) {
+  await supabase_admin
+    .from('rserve_form')
+    .delete()
+    .eq('id', id_record);
+  }
+}
+// 
+// ipアドレスを持ってくる方法を考える
+// {ascending: false}とは？

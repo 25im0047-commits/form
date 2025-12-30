@@ -6,6 +6,7 @@ import { SEND_TO_OWNER, SEND_TO_CUSTEMER } from "@/app/sendEmail/mail";
 import { insert_reservation_data } from "@/app/reservation_data/reservation_data";
 import { CheckData } from "@/app/reservation_data/reservation_data";
 import { error } from "console";
+import { delete_reservation_data } from "@/app/reservation_data/reservation_data";
 
 export default function SendForm() {
   const router = useRouter();
@@ -204,42 +205,57 @@ export default function SendForm() {
         new Promise((resolve) => setTimeout(resolve, ms));
       //=================== DBにinsert ======================
       const dbResult = await insert_reservation_data(formData_DB);
+      if (dbResult.error) {
+        throw new Error("Database insertion failed");
+      }
       //===================================================
 
-      // スパム判定による処理
-      if (dbResult.error) {
-        alert("エラーが発生しました。少し時間を置いて再度お試しください。");
-      } else {
-        //このelseの中であってたよね？meetリンク生成とカレンダーに追加！!!!
-        //================== Meetリンク生成 ==================
-        const [hourStr, minuteStr] = form.date.time.split(":");
-        const hour = Number(hourStr);
-        const minute = Number(minuteStr);
-        const pad = (n: number) => String(n).padStart(2, "0");
-        const startAt = `${form.date.year}-${form.date.month}-${form.date.day}T${pad(hour)}:${pad(minute)}`;
-        console.log("Creating Meet for:", startAt);
-        const res = await fetch("/api/create-meet", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ startAt }),
-        });
-        const { meetLink } = await res.json();
-        if (!meetLink) {
-          throw new Error("Meet link generation failed");
-        }
-        formData.append("meetLink", meetLink);
-        //===================================================
-        //=================== メール送信 ======================
-        await SEND_TO_OWNER(formData);
-        await sleep(600);
-        await SEND_TO_CUSTEMER(formData);
-        //===================================================
-        alert(
-          "予約が完了しました。\nご登録いただいたメールアドレスに確認メールを送信しました。"
-        );
+      //================== Meetリンク生成とカレンダーに追加 ==================
+      const [hourStr, minuteStr] = form.date.time.split(":");
+      const hour = Number(hourStr);
+      const minute = Number(minuteStr);
+      const pad = (n: number) => String(n).padStart(2, "0");
+      const startAt = `${form.date.year}-${form.date.month}-${form.date.day}T${pad(hour)}:${pad(minute)}`;
+      console.log("Creating Meet for:", startAt);
+      const res = await fetch("/api/create-meet", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ startAt }),
+      });
+
+      if (!res) {
+        throw new Error("Meet link generation failed");
       }
+
+      const { meetLink } = await res.json();
+      if (!meetLink) {
+        throw new Error("Meet link generation failed");
+      }
+      formData.append("meetLink", meetLink);
+      //===================================================
+
+      //=================== メール送信 ======================
+      const SEND_TO_OWNER_ERROR = await SEND_TO_OWNER(formData);
+      console.log("SEND_TO_OWNER_ERROR:", SEND_TO_OWNER_ERROR);
+      if (SEND_TO_OWNER_ERROR.error) {
+        throw new Error("Email sending to owner failed");
+      }
+      await sleep(600);
+
+      // ここからうまくいってなさそう
+      const SEND_TO_CUSTOMER_ERROR = await SEND_TO_CUSTEMER(formData);
+      if (SEND_TO_CUSTOMER_ERROR.error) {
+        throw new Error("Email sending to customer failed");
+      }
+      //===================================================
+      alert(
+        "予約が完了しました。\nご登録いただいたメールアドレスに確認メールを送信しました。"
+      );
       router.push("/");
     } catch (error) {
+      // ここの最適化は後で考える予定
+      await delete_reservation_data(); //INSERTデータの削除
+      // カレンダー削除
       alert("エラーが発生しました。少し時間を置いて再度お試しください。");
       setDisabled(false);
       setPushed(false);
