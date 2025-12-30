@@ -216,22 +216,32 @@ export default function SendForm() {
       const minute = Number(minuteStr);
       const pad = (n: number) => String(n).padStart(2, "0");
       const startAt = `${form.date.year}-${form.date.month}-${form.date.day}T${pad(hour)}:${pad(minute)}`;
-      console.log("Creating Meet for:", startAt);
       const res = await fetch("/api/create-meet", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ startAt }),
       });
-
-      if (!res) {
-        throw new Error("Meet link generation failed");
+      if (!res.ok) {
+        throw new Error(`Meet creation failed: ${res.status}`);
       }
-
-      const { meetLink } = await res.json();
-      if (!meetLink) {
-        throw new Error("Meet link generation failed");
+      const data = await res.json();
+      if (!data.meetLink) {
+        throw new Error("Meet link is missing");
       }
-      formData.append("meetLink", meetLink);
+      formData.append("meetLink", data.meetLink);
+      const eventId = data.eventId;
+
+      // カレンダー削除関数
+      async function DeleteMeet() {
+        await fetch("/api/delete-meet", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ eventId }),
+        });
+      }
+      //~~~実行すると作成されたMeetイベントが削除されるはず~~~
+      //DeleteMeet();
+      //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       //===================================================
 
       //=================== メール送信 ======================

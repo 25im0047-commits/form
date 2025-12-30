@@ -52,12 +52,13 @@ export async function POST(req: Request) {
       },
     });
 
+    const eventId = event.data.id;
     const meetLink =
       event.data.conferenceData?.entryPoints?.find(
         (e) => e.entryPointType === "video"
       )?.uri;
 
-    return NextResponse.json({ meetLink });
+    return NextResponse.json({ meetLink, eventId });
   } catch (err: any) {
     console.error(err);
     return NextResponse.json(
