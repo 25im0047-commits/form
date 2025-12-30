@@ -66,13 +66,14 @@ export async function delete_reservation_data() {
   // 1. ユーザーのipアドレスを取得するを見つける
   const headerList = await headers();
   const userIpReal = headerList.get('x-forwarded-for');
-  const userIp = userIpReal ? userIpReal.split(',')[0]: '222222';
-  console.log("userIp", userIp);
+  const userIp = userIpReal ? userIpReal.split(',')[0]: '127.0.0.1';
+
   // 2. supabaseからinsertしたデータを取得
+  // const userIp = '127.0.0.1' // テスト用のipアドレス(supabaseのipも同じにする)
   const supabase_admin= await createAdminClient();
   const id_record = await supabase_admin
   .from('rserve_form')
-  .select('id')
+  .select('id, ip_address')
   .eq('ip_address', userIp)
   .order('created_at', { ascending: false })
   .limit(1)
@@ -81,10 +82,11 @@ export async function delete_reservation_data() {
 
   // 3. そのIDで消す
   if (id_record) {
-  await supabase_admin
-    .from('rserve_form')
-    .delete()
-    .eq('id', id_record);
+    const{error} = await supabase_admin
+      .from('rserve_form')
+      .delete()
+      .eq('id', id_record.data?.id);
+    console.log("delete error", {error});
   }
 }
 // 
