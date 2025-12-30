@@ -2,16 +2,17 @@
 
 import { EmailTemplateOwner, EmailTemplateCustemer } from "./EmailTemplate";
 import { Resend } from "resend";
-import DOMPurify from 'dompurify';
-import { JSDOM } from 'jsdom';
+// import DOMPurify from 'dompurify';
+// import { JSDOM } from 'jsdom';
+import DOMPurify from 'isomorphic-dompurify';
 
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const resend = new Resend(RESEND_API_KEY);
 
 // サーバーサイドでDOMPurifyを使用するための設定
-const window = new JSDOM('').window;
+// const window = new JSDOM('').window;
 // ここの、windowというのは？JSON('')が必要なの？
-const DOMPurifyInstance = DOMPurify(window);
+// const DOMPurifyInstance = DOMPurify(window);
 
 // FormDataをサニタイズする関数
 function sanitizeFormData(formData: FormData): FormData {
@@ -21,7 +22,7 @@ function sanitizeFormData(formData: FormData): FormData {
     // entriesってkey value じゃなくて index valueじゃないの？
     if (typeof value === 'string') {
       // 危険なものは文字でありファイルは問題ないのはなぜ？
-      const cleanValue = DOMPurifyInstance.sanitize(value, { 
+      const cleanValue = DOMPurify.sanitize(value, { 
         ALLOWED_TAGS: [],
         KEEP_CONTENT: true
         // ここなんでタグ内部のテキストを保持する必要があるんだっけ？
