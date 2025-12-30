@@ -1,16 +1,8 @@
 import { NextResponse } from "next/server";
-import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/lib/auth";
 import { google } from "googleapis";
 
 export async function POST(req: Request) {
   try {
-    const session = await getServerSession(authOptions);
-
-    if (!session?.accessToken) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
     const { eventId } = await req.json();
 
     if (!eventId) {
@@ -20,9 +12,14 @@ export async function POST(req: Request) {
       );
     }
 
-    const auth = new google.auth.OAuth2();
+    // ★ create-meet と同じ管理者認証
+    const auth = new google.auth.OAuth2(
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET
+    );
+
     auth.setCredentials({
-      access_token: session.accessToken,
+      refresh_token: process.env.GOOGLE_REFRESH_TOKEN,
     });
 
     const calendar = google.calendar({ version: "v3", auth });
