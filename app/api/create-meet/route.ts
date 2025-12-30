@@ -34,7 +34,7 @@ export async function POST(req: Request) {
       requestBody: {
         summary: "テスト_オンライン面談",
         start: {
-          dateTime: new Date(startAt).toISOString(),
+          dateTime: startAt,
           timeZone: "Asia/Tokyo",
         },
         end: {

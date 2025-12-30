@@ -217,7 +217,7 @@ export default function SendForm() {
       const hour = Number(hourStr);
       const minute = Number(minuteStr);
       const pad = (n: number) => String(n).padStart(2, "0");
-      const startAt = `${form.date.year}-${form.date.month}-${form.date.day}T${pad(hour)}:${pad(minute)}`;
+      const startAt = `${form.date.year}-${form.date.month}-${form.date.day}T${pad(hour)}:${pad(minute)}:00+09:00`;
       const res = await fetch("/api/create-meet", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
