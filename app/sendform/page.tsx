@@ -20,6 +20,9 @@ export default function SendForm() {
 
   const [pushed, setPushed] = useState(false);
 
+  const sleep = (ms: number) =>
+    new Promise((resolve) => setTimeout(resolve, ms));
+
   type FormState = {
     date: {
       year: string;
@@ -200,9 +203,8 @@ export default function SendForm() {
 
     const formData_DB = formData;
 
+    let eventId: string;
     try {
-      const sleep = (ms: number) =>
-        new Promise((resolve) => setTimeout(resolve, ms));
       //=================== DBにinsert ======================
       const dbResult = await insert_reservation_data(formData_DB);
       if (dbResult.error) {
@@ -229,8 +231,7 @@ export default function SendForm() {
         throw new Error("Meet link is missing");
       }
       formData.append("meetLink", data.meetLink);
-      const eventId = data.eventId;
-      //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      eventId = data.eventId;
       //===================================================
 
       //=================== メール送信 ======================
@@ -259,6 +260,15 @@ export default function SendForm() {
       // ここの最適化は後で考える予定
       await delete_reservation_data(); //INSERTデータの削除
       // カレンダー削除
+      async function DeleteMeet() {
+        await fetch("/api/delete-meet", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ eventId }),
+        });
+      }
+      await sleep(2000);
+      await DeleteMeet();
       setDisabled(false);
       setPushed(false);
     }
