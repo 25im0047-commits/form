@@ -51,6 +51,7 @@ export async function insert_reservation_data(formData: FormData) {
     });
     if (error){
       return { success:false, error };
+
     } else {
       return { success:true };
     }
@@ -63,13 +64,14 @@ export async function insert_reservation_data(formData: FormData) {
 }
 
 export async function delete_reservation_data() {
+  console.log("delete関数実行されました。")
   // 1. ユーザーのipアドレスを取得するを見つける
-  const headerList = await headers();
-  const userIpReal = headerList.get('x-forwarded-for');
-  const userIp = userIpReal ? userIpReal.split(',')[0]: '127.0.0.1';
+  // const headerList = await headers();
+  // const userIpReal = headerList.get('x-forwarded-for');
+  // const userIp = userIpReal ? userIpReal.split(',')[0]: '127.0.0.1';
 
   // 2. supabaseからinsertしたデータを取得
-  // const userIp = '127.0.0.1' // テスト用のipアドレス(supabaseのipも同じにする)
+  const userIp = '127.0.0.1' // テスト用のipアドレス(supabaseのipも同じにする)
   const supabase_admin= await createAdminClient();
   const id_record = await supabase_admin
   .from('rserve_form')

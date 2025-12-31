@@ -251,7 +251,10 @@ export default function SendForm() {
         "予約が完了しました。\nご登録いただいたメールアドレスへ、当日の詳細とGoogle Meetの参加URLをお送りしました。ご確認ください。"
       );
       router.push("/");
+      console.log("デリート前")
+      await sleep(600);
       await delete_reservation_data();
+      console.log("デリート後")
       async function DeleteMeet() {
         await fetch("/api/delete-meet", {
           method: "POST",
