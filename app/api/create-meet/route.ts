@@ -32,7 +32,7 @@ export async function POST(req: Request) {
       calendarId: "primary", // 管理者のカレンダーに予定を追加する
       conferenceDataVersion: 1,
       requestBody: {
-        summary: "テスト_オンライン面談",
+        summary: "K-PASS_オンライン面談",
         start: {
           dateTime: startAt,
           timeZone: "Asia/Tokyo",
