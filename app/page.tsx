@@ -146,10 +146,16 @@ export default function HomePage() {
           </div>
 
           <button
-            className="bg-white rounded-md font-bold m-2 my-1 px-4 py-2 hover:bg-gray-200 text-[#00c7ce] shadow-md order-3"
+            className="hidden md:block bg-white rounded-md font-bold m-2 my-1 px-4 py-2 hover:bg-gray-200 text-[#00c7ce] shadow-md order-3"
             onClick={nextWeek}
           >
             次の週 ＞
+          </button>
+          <button
+            className="block md:hidden bg-white rounded-md font-bold m-2 my-1 px-4 py-2 hover:bg-gray-200 text-[#00c7ce] shadow-md order-3"
+            onClick={nextWeek}
+          >
+            ＞ 次の週
           </button>
 
           {/* 右端のボタン（機能を次の週に統一） */}

@@ -205,6 +205,7 @@ export function EmailTemplateCustemer(formData: FormData) {
             <br />
             ※ご連絡は公式LINEよりお願いいたします
           </span>
+          <br />
           <span className="tracking-wide text-gray-500">
             ────────────────────
           </span>
