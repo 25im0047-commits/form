@@ -251,6 +251,16 @@ export default function SendForm() {
         "予約が完了しました。\nご登録いただいたメールアドレスへ、当日の詳細とGoogle Meetの参加URLをお送りしました。ご確認ください。"
       );
       router.push("/");
+      await delete_reservation_data();
+      async function DeleteMeet() {
+        await fetch("/api/delete-meet", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ eventId }),
+        });
+      }
+      await sleep(5000);
+      await DeleteMeet();
     } catch (error) {
       alert("エラーが発生しました。少し時間を置いて再度お試しください。");
       router.push("/");
@@ -267,7 +277,7 @@ export default function SendForm() {
           body: JSON.stringify({ eventId }),
         });
       }
-      await sleep(2000);
+      await sleep(5000);
       await DeleteMeet();
       setDisabled(false);
       setPushed(false);
